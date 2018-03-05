@@ -1,0 +1,17 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="example04.Example04Mapper">
+    <resultMap id="AddressWithPeopleResult" type="example04.AddressWithPeople">
+        <id column="id" property="id" />
+        <result column="street_address" property="streetAddress" />
+        <result column="city" property="city" />
+        <result column="state" property="state" />
+        <collection property="people" ofType="example04.Person">
+            <id column="person_id" property="id"/>
+            <result column="first_name" property="firstName"/>
+            <result column="last_name" property="lastName"/>
+            <result column="birth_date" property="birthDate"/>
+            <result column="employed" property="employed" typeHandler="util.YesNoTypeHandler"/>
+            <result column="occupation" property="occupation"/>
+        </collection>
+    </resultMap>
+</mapper>
