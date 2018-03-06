@@ -7,7 +7,7 @@ Initially, we are concentrated on how to use MyBatis with Kotlin without substan
 Subsequently, we will investigate modifications to MyBatis, or potential Kotlin extensions, that may lead to a more
 idiomatic Kotlin integration.
 
-Note that in most cases, we are foregoing XML and working solely with the Java API for MyBatis.  Hopefully it will be
+Note that in most cases we are foregoing XML and working solely with the Java API for MyBatis.  Hopefully it will be
 clear how to translate the concepts to XML if so desired.
 
 All the code in this project is pure Kotlin. As is typical, source code is in the /src/main/kotlin
