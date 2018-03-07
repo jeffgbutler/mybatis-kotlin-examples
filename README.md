@@ -32,12 +32,16 @@ is need in MyBatis. MyBatis can auto discover class constructors in this case. T
 1. Only simple data types are used
 2. There are no nested classes or group by functions 
 
-### example02 - Type Handlers
+### example02 - Type Handlers and Advanced Auto Mapping
 
 This example shows the use of TypeHandlers. With this example we have moved beyond simple types.
 We are still using immutable types, but in this case we have a non standard type that requires a
-TypeHandler. In addition to creating the TypeHandler itself, we are now forced to use the `@ConstructorArgs` annotation
-on the mapper to specify two things: the data types for the constructor, and the type handler.
+TypeHandler. In addition to creating the TypeHandler itself, we need to annotate the class constructor
+with the `@AutomapConstructor` annotation and also register the type handler.  Important code changes:
+  
+1. Look in `/src/main/kotlin/example02/Example02Model.kt` to see how to annotate the class
+2. Look in `/src/main/kotlin/util/YesNoTypeHandler.kt` to see how to write the type handler
+3. Look in `/src/test/kotlin/example02/Example02Test.kt` to see how to register the type handler
 
 ### example03 - Nested Objects
 
