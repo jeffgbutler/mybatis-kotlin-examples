@@ -21,6 +21,7 @@ import java.sql.DriverManager
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.SoftAssertions
 import org.mybatis.dynamic.sql.render.RenderingStrategy
+import util.YesNoTypeHandler
 import java.util.*
 
 internal class Example05Test {
@@ -40,6 +41,7 @@ internal class Example05Test {
         val ds = UnpooledDataSource(JDBC_DRIVER, JDBC_URL, "sa", "")
         val environment = Environment("test", JdbcTransactionFactory(), ds)
         val config = Configuration(environment)
+        config.typeHandlerRegistry.register(YesNoTypeHandler::class.java)
         config.addMapper(PersonMapper::class.java)
         sqlSessionFactory = SqlSessionFactoryBuilder().build(config)
     }
