@@ -1,27 +1,27 @@
 package example05
 
-import org.mybatis.dynamic.sql.SqlBuilder.*
 import example05.PersonDynamicSqlSupport.Person
-import example05.PersonDynamicSqlSupport.Person.id
-import example05.PersonDynamicSqlSupport.Person.firstName
 import example05.PersonDynamicSqlSupport.Person.employed
+import example05.PersonDynamicSqlSupport.Person.firstName
+import example05.PersonDynamicSqlSupport.Person.id
+import example05.PersonDynamicSqlSupport.Person.lastName
 import example05.PersonDynamicSqlSupport.Person.occupation
-
 import org.apache.ibatis.datasource.unpooled.UnpooledDataSource
 import org.apache.ibatis.jdbc.ScriptRunner
 import org.apache.ibatis.mapping.Environment
-import org.apache.ibatis.session.*
+import org.apache.ibatis.session.Configuration
+import org.apache.ibatis.session.SqlSessionFactory
+import org.apache.ibatis.session.SqlSessionFactoryBuilder
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-
-import java.io.InputStreamReader
-import java.sql.DriverManager
-
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.SoftAssertions
+import org.mybatis.dynamic.sql.SqlBuilder.*
+import org.mybatis.dynamic.sql.kotlin.*
 import org.mybatis.dynamic.sql.render.RenderingStrategy
 import util.YesNoTypeHandler
+import java.io.InputStreamReader
+import java.sql.DriverManager
 import java.util.*
 
 internal class Example05Test {
@@ -51,29 +51,55 @@ internal class Example05Test {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
-            val rows = mapper.selectByExample()
-                    .where(id, isEqualTo(1))
-                    .or(occupation, isNull())
-                    .build()
-                    .execute()
+            val rows = mapper.selectByExample {
+                where(id, isEqualTo(1))
+                        .or(occupation, isNull())
+                        .orderBy(id)
+            }
 
             assertThat(rows.size).isEqualTo(3)
+            assertThat(rows[0].id).isEqualTo(1)
+            assertThat(rows[0].firstName).isEqualTo("Fred")
+            assertThat(rows[0].lastName).isEqualTo("Flintstone")
+            assertThat(rows[0].birthDate).isNotNull()
+            assertThat(rows[0].employed).isTrue()
+            assertThat(rows[0].occupation).isEqualTo("Brontosaurus Operator")
+            assertThat(rows[0].addressId).isEqualTo(1)
         }
     }
 
     @Test
-    fun testSelectByExampleWithRowbounds() {
+    fun testSelectAllRows() {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val rowBounds = RowBounds(2, 2)
 
-            val rows = mapper.selectByExample(rowBounds)
-                    .where(id, isEqualTo(1))
-                    .or(occupation, isNull())
-                    .build()
-                    .execute()
+            val rows = mapper.selectByExample(selectAllRows())
 
-            assertThat(rows.size).isEqualTo(1)
+            assertThat(rows.size).isEqualTo(6)
+        }
+    }
+
+    @Test
+    fun testSelectAllRowsWithOrder() {
+        sqlSessionFactory.openSession().use { session ->
+            val mapper = session.getMapper(PersonMapper::class.java)
+
+            val rows = mapper.selectByExample(selectAllRowsOrderedBy(firstName, lastName))
+
+            assertThat(rows.size).isEqualTo(6)
+            assertThat(rows[0].firstName).isEqualTo("Bamm Bamm")
+        }
+    }
+
+    @Test
+    fun testSelectByPrimaryKeyNoRecord() {
+        sqlSessionFactory.openSession().use { session ->
+            val mapper = session.getMapper(PersonMapper::class.java)
+
+            val row = mapper.selectByPrimaryKey(22)
+
+            assertThat(row?.id).isNull()
+            assertThat(row).isNull()
         }
     }
 
@@ -82,29 +108,12 @@ internal class Example05Test {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
-            val rows = mapper.selectDistinctByExample()
-                    .where(id, isGreaterThan(1))
-                    .or(occupation, isNull())
-                    .build()
-                    .execute()
+            val rows = mapper.selectDistinctByExample {
+                where(id, isGreaterThan(1))
+                        .or(occupation, isNull())
+            }
 
             assertThat(rows.size).isEqualTo(5)
-        }
-    }
-
-    @Test
-    fun testSelectDistinctByExampleWithRowbounds() {
-        sqlSessionFactory.openSession().use { session ->
-            val mapper = session.getMapper(PersonMapper::class.java)
-            val rowBounds = RowBounds(2, 2)
-
-            val rows = mapper.selectDistinctByExample(rowBounds)
-                    .where(id, isGreaterThan(1))
-                    .or(occupation, isNull())
-                    .build()
-                    .execute()
-
-            assertThat(rows.size).isEqualTo(2)
         }
     }
 
@@ -113,17 +122,14 @@ internal class Example05Test {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
-            val rows = mapper.selectByExample()
-                    .where(employed, isEqualTo(false))
-                    .orderBy(id)
-                    .build()
-                    .execute()
-
-            SoftAssertions.assertSoftly { softly ->
-                softly.assertThat(rows.size).isEqualTo(2)
-                softly.assertThat(rows[0].id).isEqualTo(3)
-                softly.assertThat(rows[1].id).isEqualTo(6)
+            val rows = mapper.selectByExample {
+                where(employed, isEqualTo(false))
+                        .orderBy(id)
             }
+
+            assertThat(rows.size).isEqualTo(2)
+            assertThat(rows[0].id).isEqualTo(3)
+            assertThat(rows[1].id).isEqualTo(6)
         }
     }
 
@@ -132,10 +138,7 @@ internal class Example05Test {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
-            val rows = mapper.selectByExample()
-                    .where(firstName, isIn("Fred", "Barney"))
-                    .build()
-                    .execute()
+            val rows = mapper.selectByExample { where(firstName, isIn("Fred", "Barney")) }
 
             assertThat(rows.size).isEqualTo(2)
             assertThat(rows[0].lastName).isEqualTo("Flintstone")
@@ -147,11 +150,17 @@ internal class Example05Test {
     fun testDeleteByExample() {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val rows = mapper.deleteByExample()
-                    .where(occupation, isNull())
-                    .build()
-                    .execute()
+            val rows = mapper.deleteByExample { where(occupation, isNull()) }
             assertThat(rows).isEqualTo(2)
+        }
+    }
+
+    @Test
+    fun testDeleteAllRows() {
+        sqlSessionFactory.openSession().use { session ->
+            val mapper = session.getMapper(PersonMapper::class.java)
+            val rows = mapper.deleteByExample(deleteAllRows())
+            assertThat(rows).isEqualTo(6)
         }
     }
 
@@ -177,6 +186,18 @@ internal class Example05Test {
     }
 
     @Test
+    fun testInsertMultiple() {
+        sqlSessionFactory.openSession().use { session ->
+            val mapper = session.getMapper(PersonMapper::class.java)
+
+            val rows = mapper.insertMultiple(
+                    PersonRecord(10, "Joe", "Jones", Date(), true, "Developer", 22),
+                    PersonRecord(11, "Sam", "Smith", Date(), true, "Architect", 23))
+            assertThat(rows).isEqualTo(2)
+        }
+    }
+
+    @Test
     fun testInsertWithNull() {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
@@ -193,17 +214,15 @@ internal class Example05Test {
             val mapper = session.getMapper(PersonMapper::class.java)
             val record = PersonRecord(100, "Joe", "Jones", Date(), true, "Developer", 22)
 
-            SoftAssertions.assertSoftly { softly ->
-                var rows = mapper.insert(record)
-                softly.assertThat(rows).isEqualTo(1)
+            var rows = mapper.insert(record)
+            assertThat(rows).isEqualTo(1)
 
-                val updateRecord = record.copy(occupation = "Programmer")
-                rows = mapper.updateByPrimaryKey(updateRecord)
-                softly.assertThat(rows).isEqualTo(1)
+            val updateRecord = record.copy(occupation = "Programmer")
+            rows = mapper.updateByPrimaryKey(updateRecord)
+            assertThat(rows).isEqualTo(1)
 
-                val newRecord = mapper.selectByPrimaryKey(100)
-                softly.assertThat(newRecord.occupation).isEqualTo("Programmer")
-            }
+            val newRecord = mapper.selectByPrimaryKey(100)
+            assertThat(newRecord?.occupation).isEqualTo("Programmer")
         }
     }
 
@@ -213,18 +232,16 @@ internal class Example05Test {
             val mapper = session.getMapper(PersonMapper::class.java)
             val record = PersonRecord(100, "Joe", "Jones", Date(), true, "Developer", 22)
 
-            SoftAssertions.assertSoftly { softly ->
-                var rows = mapper.insert(record)
-                softly.assertThat(rows).isEqualTo(1)
+            var rows = mapper.insert(record)
+            assertThat(rows).isEqualTo(1)
 
-                val updateRecord = PersonRecordForUpdate(id = 100, occupation = "Programmer")
-                rows = mapper.updateByPrimaryKeySelective(updateRecord)
-                softly.assertThat(rows).isEqualTo(1)
+            val updateRecord = PersonRecord(id = 100, occupation = "Programmer")
+            rows = mapper.updateByPrimaryKeySelective(updateRecord)
+            assertThat(rows).isEqualTo(1)
 
-                val newRecord = mapper.selectByPrimaryKey(100)
-                softly.assertThat(newRecord.occupation).isEqualTo("Programmer")
-                softly.assertThat(newRecord.firstName).isEqualTo("Joe")
-            }
+            val newRecord = mapper.selectByPrimaryKey(100)
+            assertThat(newRecord?.occupation).isEqualTo("Programmer")
+            assertThat(newRecord?.firstName).isEqualTo("Joe")
 
         }
     }
@@ -235,20 +252,16 @@ internal class Example05Test {
             val mapper = session.getMapper(PersonMapper::class.java)
             val record = PersonRecord(100, "Joe", "Jones", Date(), true, "Developer", 22)
 
-            SoftAssertions.assertSoftly { softly ->
-                var rows = mapper.insert(record)
-                softly.assertThat(rows).isEqualTo(1)
+            var rows = mapper.insert(record)
+            assertThat(rows).isEqualTo(1)
 
-                val updateRecord = PersonRecordForUpdate(record)
-                updateRecord.occupation = "Programmer"
-                rows = mapper.updateByPrimaryKeySelective(updateRecord)
-                softly.assertThat(rows).isEqualTo(1)
+            val updateRecord = PersonRecord(record.id, record.firstName, record.lastName, record.birthDate, record.employed, "Programmer", record.addressId)
+            rows = mapper.updateByPrimaryKeySelective(updateRecord)
+            assertThat(rows).isEqualTo(1)
 
-                val newRecord = mapper.selectByPrimaryKey(100)
-                softly.assertThat(newRecord.occupation).isEqualTo("Programmer")
-                softly.assertThat(newRecord.firstName).isEqualTo("Joe")
-            }
-
+            val newRecord = mapper.selectByPrimaryKey(100)
+            assertThat(newRecord?.occupation).isEqualTo("Programmer")
+            assertThat(newRecord?.firstName).isEqualTo("Joe")
         }
     }
 
@@ -258,25 +271,23 @@ internal class Example05Test {
             val mapper = session.getMapper(PersonMapper::class.java)
             val record = PersonRecord(100, "Joe", "Jones", Date(), true, "Developer", 22)
 
-            SoftAssertions.assertSoftly { softly ->
-                var rows = mapper.insert(record)
-                softly.assertThat(rows).isEqualTo(1)
+            var rows = mapper.insert(record)
+            assertThat(rows).isEqualTo(1)
 
-                val updateStatement = update(Person)
-                        .set(occupation).equalToNull()
-                        .set(employed).equalTo(false)
-                        .where(id, isEqualTo(100))
-                        .build()
-                        .render(RenderingStrategy.MYBATIS3)
+            val updateStatement = update(Person)
+                    .set(occupation).equalToNull()
+                    .set(employed).equalTo(false)
+                    .where(id, isEqualTo(100))
+                    .build()
+                    .render(RenderingStrategy.MYBATIS3)
 
-                rows = mapper.update(updateStatement)
-                softly.assertThat(rows).isEqualTo(1)
+            rows = mapper.update(updateStatement)
+            assertThat(rows).isEqualTo(1)
 
-                val newRecord = mapper.selectByPrimaryKey(100)
-                softly.assertThat(newRecord.occupation).isNull()
-                softly.assertThat(newRecord.employed).isEqualTo(false)
-                softly.assertThat(newRecord.firstName).isEqualTo("Joe")
-            }
+            val newRecord = mapper.selectByPrimaryKey(100)
+            assertThat(newRecord?.occupation).isNull()
+            assertThat(newRecord?.employed).isEqualTo(false)
+            assertThat(newRecord?.firstName).isEqualTo("Joe")
         }
     }
 
@@ -286,22 +297,41 @@ internal class Example05Test {
             val mapper = session.getMapper(PersonMapper::class.java)
             val record = PersonRecord(100, "Joe", "Jones", Date(), true, "Developer", 22)
 
-            SoftAssertions.assertSoftly { softly ->
-                var rows = mapper.insert(record)
-                softly.assertThat(rows).isEqualTo(1)
+            var rows = mapper.insert(record)
+            assertThat(rows).isEqualTo(1)
 
-                val updateRecord = record.copy(occupation = "Programmer")
-                rows = mapper.updateByExample(updateRecord)
-                        .where(id, isEqualTo(100))
+            val updateRecord = record.copy(occupation = "Programmer")
+            rows = mapper.updateByExample {
+                where(id, isEqualTo(100))
                         .and(firstName, isEqualTo("Joe"))
-                        .build()
-                        .execute()
-
-                softly.assertThat(rows).isEqualTo(1)
-
-                val newRecord = mapper.selectByPrimaryKey(100)
-                softly.assertThat(newRecord.occupation).isEqualTo("Programmer")
             }
+                    .usingRecord(updateRecord)
+
+            assertThat(rows).isEqualTo(1)
+
+            val newRecord = mapper.selectByPrimaryKey(100)
+            assertThat(newRecord?.occupation).isEqualTo("Programmer")
+        }
+    }
+
+    @Test
+    fun testUpdateAllRows() {
+        sqlSessionFactory.openSession().use { session ->
+            val mapper = session.getMapper(PersonMapper::class.java)
+            val record = PersonRecord(100, "Joe", "Jones", Date(), true, "Developer", 22)
+
+            var rows = mapper.insert(record)
+            assertThat(rows).isEqualTo(1)
+
+            val updateRecord = PersonRecord(occupation = "Programmer")
+
+            rows = mapper.updateByExampleSelective(updateAllRows())
+                    .usingRecord(updateRecord)
+
+            assertThat(rows).isEqualTo(7)
+
+            val newRecord = mapper.selectByPrimaryKey(100)
+            assertThat(newRecord?.occupation).isEqualTo("Programmer")
         }
     }
 
@@ -309,12 +339,19 @@ internal class Example05Test {
     fun testCountByExample() {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val rows = mapper.countByExample()
-                    .where(occupation, isNull())
-                    .build()
-                    .execute()
+            val rows = mapper.countByExample { where(occupation, isNull()) }
 
             assertThat(rows).isEqualTo(2L)
+        }
+    }
+
+    @Test
+    fun testCountAll() {
+        sqlSessionFactory.openSession().use { session ->
+            val mapper = session.getMapper(PersonMapper::class.java)
+            val rows = mapper.countByExample(countAllRows())
+
+            assertThat(rows).isEqualTo(6L)
         }
     }
 
