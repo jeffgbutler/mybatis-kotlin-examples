@@ -2,7 +2,6 @@ package org.mybatis.dynamic.sql.kotlin
 
 import org.mybatis.dynamic.sql.BasicColumn
 import org.mybatis.dynamic.sql.SortSpecification
-import org.mybatis.dynamic.sql.SqlColumn
 import org.mybatis.dynamic.sql.SqlTable
 import org.mybatis.dynamic.sql.delete.DeleteDSL
 import org.mybatis.dynamic.sql.delete.DeleteModel
@@ -16,8 +15,6 @@ import org.mybatis.dynamic.sql.update.UpdateDSL
 import org.mybatis.dynamic.sql.update.UpdateModel
 import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider
 import org.mybatis.dynamic.sql.util.Buildable
-import java.sql.JDBCType
-import kotlin.reflect.KClass
 
 typealias CountHelper = QueryExpressionDSL<SelectModelAdapter<Long>>.() -> Buildable<SelectModelAdapter<Long>>
 typealias DeleteHelper = DeleteDSL<DeleteModelAdapter>.() -> Buildable<DeleteModelAdapter>
@@ -37,31 +34,19 @@ class UpdateModelAdapter(private val updateModel: UpdateModel, private val mappe
     fun execute() = mapperMethod(updateModel.render(RenderingStrategy.MYBATIS3))
 }
 
-fun <R> selectWithKotlinMapper(mapperMethod: (SelectStatementProvider) -> R, vararg selectList: BasicColumn): QueryExpressionDSL.FromGatherer<SelectModelAdapter<R>> {
-    return SelectDSL.select({ SelectModelAdapter(it, mapperMethod) }, selectList)
-}
+fun <R> selectWithKotlinMapper(mapperMethod: (SelectStatementProvider) -> R, vararg selectList: BasicColumn) =
+    SelectDSL.select({ SelectModelAdapter(it, mapperMethod) }, selectList) as QueryExpressionDSL.FromGatherer<SelectModelAdapter<R>>
 
-fun <R> selectDistinctWithKotlinMapper(mapperMethod: (SelectStatementProvider) -> R, vararg selectList: BasicColumn): QueryExpressionDSL.FromGatherer<SelectModelAdapter<R>> {
-    return SelectDSL.selectDistinct({ SelectModelAdapter(it, mapperMethod) }, selectList)
-}
+fun <R> selectDistinctWithKotlinMapper(mapperMethod: (SelectStatementProvider) -> R, vararg selectList: BasicColumn) =
+    SelectDSL.selectDistinct({ SelectModelAdapter(it, mapperMethod) }, selectList) as QueryExpressionDSL.FromGatherer<SelectModelAdapter<R>>
 
-fun deleteWithKotlinMapper(mapperMethod: (DeleteStatementProvider) -> Int, table: SqlTable): DeleteDSL<DeleteModelAdapter> {
-    return DeleteDSL.deleteFrom({ DeleteModelAdapter(it, mapperMethod) }, table)
-}
+fun deleteWithKotlinMapper(mapperMethod: (DeleteStatementProvider) -> Int, table: SqlTable) =
+    DeleteDSL.deleteFrom({ DeleteModelAdapter(it, mapperMethod) }, table) as DeleteDSL<DeleteModelAdapter>
 
-fun updateWithKotlinMapper(mapperMethod: (UpdateStatementProvider) -> Int, table: SqlTable): UpdateDSL<UpdateModelAdapter> {
-    return UpdateDSL.update({ UpdateModelAdapter(it, mapperMethod) }, table)
-}
+fun updateWithKotlinMapper(mapperMethod: (UpdateStatementProvider) -> Int, table: SqlTable) =
+    UpdateDSL.update({ UpdateModelAdapter(it, mapperMethod) }, table) as UpdateDSL<UpdateModelAdapter>
 
-fun DeleteDSL<DeleteModelAdapter>.allRows(): Buildable<DeleteModelAdapter> = this
-fun <T> QueryExpressionDSL<SelectModelAdapter<T>>.allRows(): Buildable<SelectModelAdapter<T>> = this
-fun <T> QueryExpressionDSL<SelectModelAdapter<T>>.allRowsOrderedBy(vararg columns: SortSpecification): Buildable<SelectModelAdapter<T>> = orderBy(*columns)
-
-fun <T : Any> SqlTable.column(name: String, type: KClass<T>): SqlColumn<T> =
-        SqlColumn.of(name, this)
-
-fun <T : Any> SqlTable.column(name: String, jdbcType: JDBCType, type: KClass<T>): SqlColumn<T> =
-        SqlColumn.of(name, this, jdbcType)
-
-fun <T : Any> SqlTable.column(name: String, jdbcType: JDBCType, typeHandler: String, type: KClass<T>): SqlColumn<T> =
-        SqlColumn.of<T>(name, this, jdbcType).withTypeHandler(typeHandler)
+fun DeleteDSL<DeleteModelAdapter>.allRows() = this as Buildable<DeleteModelAdapter>
+fun <T> QueryExpressionDSL<SelectModelAdapter<T>>.allRows() = this as Buildable<SelectModelAdapter<T>>
+fun <T> QueryExpressionDSL<SelectModelAdapter<T>>.allRowsOrderedBy(vararg columns: SortSpecification) =
+        orderBy(*columns) as Buildable<SelectModelAdapter<T>>
