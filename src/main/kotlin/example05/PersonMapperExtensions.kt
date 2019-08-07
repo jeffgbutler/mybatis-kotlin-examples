@@ -13,23 +13,23 @@ import org.mybatis.dynamic.sql.SqlBuilder.count
 import org.mybatis.dynamic.sql.SqlBuilder.isEqualTo
 import org.mybatis.dynamic.sql.kotlin.*
 import org.mybatis.dynamic.sql.render.RenderingStrategy
+import org.mybatis.dynamic.sql.update.UpdateDSL
 
-fun PersonMapper.countByExample(helper: CountByExampleHelper) =
+fun PersonMapper.count(helper: CountHelper) =
         helper(selectWithKotlinMapper(this::count, count())
                 .from(Person))
                 .build()
                 .execute()
 
-fun PersonMapper.deleteByExample(helper: DeleteByExampleHelper) =
+fun PersonMapper.delete(helper: DeleteHelper) =
         helper(deleteWithKotlinMapper(this::delete, Person))
                 .build()
                 .execute()
 
 fun PersonMapper.deleteByPrimaryKey(id_: Int) =
-        deleteWithKotlinMapper(this::delete, Person)
-                .where(id, isEqualTo(id_))
-                .build()
-                .execute()
+        delete {
+            where(id, isEqualTo(id_))
+        }
 
 fun PersonMapper.insert(record: PersonRecord) =
         insert(SqlBuilder.insert(record)
@@ -57,67 +57,72 @@ fun PersonMapper.insertMultiple(vararg records: PersonRecord) =
                 .build()
                 .render(RenderingStrategy.MYBATIS3))
 
-fun PersonMapper.selectByExample(helper: SelectByExampleHelper<PersonRecord>) =
+fun PersonMapper.selectOne(helper: SelectOneHelper<PersonRecord>) =
+        helper(selectWithKotlinMapper(this::selectOne, id.`as`("A_ID"), firstName, lastName, birthDate, employed, occupation, addressId)
+                .from(Person))
+                .build()
+                .execute()
+
+fun PersonMapper.select(helper: SelectListHelper<PersonRecord>) =
         helper(selectWithKotlinMapper(this::selectMany, id.`as`("A_ID"), firstName, lastName, birthDate, employed, occupation, addressId)
                 .from(Person))
                 .build()
                 .execute()
 
-fun PersonMapper.selectDistinctByExample(helper: SelectByExampleHelper<PersonRecord>) =
+fun PersonMapper.selectDistinct(helper: SelectListHelper<PersonRecord>) =
         helper(selectDistinctWithKotlinMapper(this::selectMany, id.`as`("A_ID"), firstName, lastName, birthDate, employed, occupation, addressId)
                 .from(Person))
                 .build()
                 .execute()
 
 fun PersonMapper.selectByPrimaryKey(id_: Int) =
-        selectWithKotlinMapper(this::selectOne, id.`as`("A_ID"), firstName, lastName, birthDate, employed, occupation, addressId)
-                .from(Person)
-                .where(id, isEqualTo(id_))
-                .build()
-                .execute()
+        selectOne {
+            where(id, isEqualTo(id_))
+        }
 
-fun PersonMapper.updateByExample(helper: UpdateByExampleHelper): UpdateByExampleCompleter<PersonRecord> =
-        UpdateByExampleCompleter(Person, helper, this::update, { record, dsl ->
-            dsl.set(id).equalTo(record::id)
-                    .set(firstName).equalTo(record::firstName)
-                    .set(lastName).equalTo(record::lastName)
-                    .set(birthDate).equalTo(record::birthDate)
-                    .set(employed).equalTo(record::employed)
-                    .set(occupation).equalTo(record::occupation)
-                    .set(addressId).equalTo(record::addressId)
-        })
-
-fun PersonMapper.updateByExampleSelective(helper: UpdateByExampleHelper): UpdateByExampleCompleter<PersonRecord> =
-        UpdateByExampleCompleter(Person, helper, this::update, { record, dsl ->
-            dsl.set(id).equalToWhenPresent(record::id)
-                    .set(firstName).equalToWhenPresent(record::firstName)
-                    .set(lastName).equalToWhenPresent(record::lastName)
-                    .set(birthDate).equalToWhenPresent(record::birthDate)
-                    .set(employed).equalToWhenPresent(record::employed)
-                    .set(occupation).equalToWhenPresent(record::occupation)
-                    .set(addressId).equalToWhenPresent(record::addressId)
-        })
+fun PersonMapper.update(helper: UpdateHelper) =
+        helper(updateWithKotlinMapper(this::update, Person)).build().execute()
 
 fun PersonMapper.updateByPrimaryKey(record: PersonRecord) =
-        updateWithKotlinMapper(this::update, Person)
-                .set(firstName).equalTo(record::firstName)
-                .set(lastName).equalTo(record::lastName)
-                .set(birthDate).equalTo(record::birthDate)
-                .set(employed).equalTo(record::employed)
-                .set(occupation).equalTo(record::occupation)
-                .set(addressId).equalTo(record::addressId)
-                .where(id, isEqualTo(record::id))
-                .build()
-                .execute()
+        update {
+            set(firstName).equalTo(record::firstName)
+            set(lastName).equalTo(record::lastName)
+            set(birthDate).equalTo(record::birthDate)
+            set(employed).equalTo(record::employed)
+            set(occupation).equalTo(record::occupation)
+            set(addressId).equalTo(record::addressId)
+            where(id, isEqualTo(record::id))
+        }
 
 fun PersonMapper.updateByPrimaryKeySelective(record: PersonRecord) =
-        updateWithKotlinMapper(this::update, Person)
-                .set(firstName).equalToWhenPresent(record::firstName)
-                .set(lastName).equalToWhenPresent(record::lastName)
-                .set(birthDate).equalToWhenPresent(record::birthDate)
-                .set(employed).equalToWhenPresent(record::employed)
-                .set(occupation).equalToWhenPresent(record::occupation)
-                .set(addressId).equalToWhenPresent(record::addressId)
-                .where(id, isEqualTo(record::id))
-                .build()
-                .execute()
+        update {
+            set(firstName).equalToWhenPresent(record::firstName)
+            set(lastName).equalToWhenPresent(record::lastName)
+            set(birthDate).equalToWhenPresent(record::birthDate)
+            set(employed).equalToWhenPresent(record::employed)
+            set(occupation).equalToWhenPresent(record::occupation)
+            set(addressId).equalToWhenPresent(record::addressId)
+            where(id, isEqualTo(record::id))
+        }
+
+fun UpdateDSL<UpdateModelAdapter>.setAll(record: PersonRecord) =
+        apply {
+            set(id).equalTo(record::id)
+            set(firstName).equalTo(record::firstName)
+            set(lastName).equalTo(record::lastName)
+            set(birthDate).equalTo(record::birthDate)
+            set(employed).equalTo(record::employed)
+            set(occupation).equalTo(record::occupation)
+            set(addressId).equalTo(record::addressId)
+        }
+
+fun UpdateDSL<UpdateModelAdapter>.setSelective(record: PersonRecord) =
+        apply {
+            set(id).equalToWhenPresent(record::id)
+            set(firstName).equalToWhenPresent(record::firstName)
+            set(lastName).equalToWhenPresent(record::lastName)
+            set(birthDate).equalToWhenPresent(record::birthDate)
+            set(employed).equalToWhenPresent(record::employed)
+            set(occupation).equalToWhenPresent(record::occupation)
+            set(addressId).equalToWhenPresent(record::addressId)
+        }

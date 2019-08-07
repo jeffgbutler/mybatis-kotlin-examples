@@ -47,11 +47,11 @@ internal class Example05Test {
     }
 
     @Test
-    fun testSelectByExample() {
+    fun testSelect() {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
-            val rows = mapper.selectByExample {
+            val rows = mapper.select {
                 where(id, isEqualTo(1))
                         .or(occupation, isNull())
                         .orderBy(id)
@@ -73,7 +73,7 @@ internal class Example05Test {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
-            val rows = mapper.selectByExample(selectAllRows())
+            val rows = mapper.select(selectAllRows())
 
             assertThat(rows.size).isEqualTo(6)
         }
@@ -84,7 +84,7 @@ internal class Example05Test {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
-            val rows = mapper.selectByExample(selectAllRowsOrderedBy(firstName, lastName))
+            val rows = mapper.select(selectAllRowsOrderedBy(firstName, lastName))
 
             assertThat(rows.size).isEqualTo(6)
             assertThat(rows[0].firstName).isEqualTo("Bamm Bamm")
@@ -104,11 +104,11 @@ internal class Example05Test {
     }
 
     @Test
-    fun testSelectDistinctByExample() {
+    fun testSelectDistinct() {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
-            val rows = mapper.selectDistinctByExample {
+            val rows = mapper.selectDistinct {
                 where(id, isGreaterThan(1))
                         .or(occupation, isNull())
             }
@@ -118,11 +118,11 @@ internal class Example05Test {
     }
 
     @Test
-    fun testSelectByExampleWithTypeHandler() {
+    fun testSelectWithTypeHandler() {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
-            val rows = mapper.selectByExample {
+            val rows = mapper.select {
                 where(employed, isEqualTo(false))
                         .orderBy(id)
             }
@@ -138,7 +138,7 @@ internal class Example05Test {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
-            val rows = mapper.selectByExample { where(firstName, isIn("Fred", "Barney")) }
+            val rows = mapper.select { where(firstName, isIn("Fred", "Barney")) }
 
             assertThat(rows.size).isEqualTo(2)
             assertThat(rows[0].lastName).isEqualTo("Flintstone")
@@ -147,10 +147,10 @@ internal class Example05Test {
     }
 
     @Test
-    fun testDeleteByExample() {
+    fun testDelete() {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val rows = mapper.deleteByExample { where(occupation, isNull()) }
+            val rows = mapper.delete { where(occupation, isNull()) }
             assertThat(rows).isEqualTo(2)
         }
     }
@@ -159,7 +159,7 @@ internal class Example05Test {
     fun testDeleteAllRows() {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val rows = mapper.deleteByExample(deleteAllRows())
+            val rows = mapper.delete(deleteAllRows())
             assertThat(rows).isEqualTo(6)
         }
     }
@@ -292,7 +292,7 @@ internal class Example05Test {
     }
 
     @Test
-    fun testUpdateByExample() {
+    fun testUpdate() {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
             val record = PersonRecord(100, "Joe", "Jones", Date(), true, "Developer", 22)
@@ -301,11 +301,11 @@ internal class Example05Test {
             assertThat(rows).isEqualTo(1)
 
             val updateRecord = record.copy(occupation = "Programmer")
-            rows = mapper.updateByExample {
+            rows = mapper.update {
+                setAll(updateRecord)
                 where(id, isEqualTo(100))
                         .and(firstName, isEqualTo("Joe"))
             }
-                    .usingRecord(updateRecord)
 
             assertThat(rows).isEqualTo(1)
 
@@ -325,8 +325,9 @@ internal class Example05Test {
 
             val updateRecord = PersonRecord(occupation = "Programmer")
 
-            rows = mapper.updateByExampleSelective(updateAllRows())
-                    .usingRecord(updateRecord)
+            rows = mapper.update {
+                setSelective(updateRecord)
+            }
 
             assertThat(rows).isEqualTo(7)
 
@@ -336,10 +337,10 @@ internal class Example05Test {
     }
 
     @Test
-    fun testCountByExample() {
+    fun testCount() {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val rows = mapper.countByExample { where(occupation, isNull()) }
+            val rows = mapper.count { where(occupation, isNull()) }
 
             assertThat(rows).isEqualTo(2L)
         }
@@ -349,7 +350,7 @@ internal class Example05Test {
     fun testCountAll() {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val rows = mapper.countByExample(countAllRows())
+            val rows = mapper.count(countAllRows())
 
             assertThat(rows).isEqualTo(6L)
         }

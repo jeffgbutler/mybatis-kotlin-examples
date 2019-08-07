@@ -19,11 +19,11 @@ import org.mybatis.dynamic.sql.util.Buildable
 import java.sql.JDBCType
 import kotlin.reflect.KClass
 
-typealias CountByExampleHelper = QueryExpressionDSL<SelectModelAdapter<Long>>.() -> Buildable<SelectModelAdapter<Long>>
-typealias DeleteByExampleHelper = DeleteDSL<DeleteModelAdapter>.() -> Buildable<DeleteModelAdapter>
-typealias SelectByExampleHelper<T> = QueryExpressionDSL<SelectModelAdapter<List<T>>>.() -> Buildable<SelectModelAdapter<List<T>>>
-typealias UpdateByExampleHelper = UpdateDSL<UpdateModelAdapter>.() -> Buildable<UpdateModelAdapter>
-typealias UpdateByExampleValueSetter<T> = (T, UpdateDSL<UpdateModelAdapter>) -> UpdateDSL<UpdateModelAdapter>
+typealias CountHelper = QueryExpressionDSL<SelectModelAdapter<Long>>.() -> Buildable<SelectModelAdapter<Long>>
+typealias DeleteHelper = DeleteDSL<DeleteModelAdapter>.() -> Buildable<DeleteModelAdapter>
+typealias SelectListHelper<T> = QueryExpressionDSL<SelectModelAdapter<List<T>>>.() -> Buildable<SelectModelAdapter<List<T>>>
+typealias SelectOneHelper<T> = QueryExpressionDSL<SelectModelAdapter<T?>>.() -> Buildable<SelectModelAdapter<T?>>
+typealias UpdateHelper = UpdateDSL<UpdateModelAdapter>.() -> Buildable<UpdateModelAdapter>
 
 class DeleteModelAdapter(private val deleteModel: DeleteModel, private val mapperMethod: (DeleteStatementProvider) -> Int) {
     fun execute() = mapperMethod(deleteModel.render(RenderingStrategy.MYBATIS3))
@@ -35,13 +35,6 @@ class SelectModelAdapter<R>(private val selectModel: SelectModel, private val ma
 
 class UpdateModelAdapter(private val updateModel: UpdateModel, private val mapperMethod: (UpdateStatementProvider) -> Int) {
     fun execute() = mapperMethod(updateModel.render(RenderingStrategy.MYBATIS3))
-}
-
-class UpdateByExampleCompleter<T>(private val table: SqlTable, private val helper: UpdateByExampleHelper,
-                                  private val mapperMethod: (UpdateStatementProvider) -> Int,
-                                  private val valueSetter: UpdateByExampleValueSetter<T>) {
-    fun usingRecord(record: T) =
-            helper(valueSetter(record, updateWithKotlinMapper(mapperMethod, table))).build().execute()
 }
 
 fun <R> selectWithKotlinMapper(mapperMethod: (SelectStatementProvider) -> R, vararg selectList: BasicColumn): QueryExpressionDSL.FromGatherer<SelectModelAdapter<R>> {
@@ -60,11 +53,10 @@ fun updateWithKotlinMapper(mapperMethod: (UpdateStatementProvider) -> Int, table
     return UpdateDSL.update({ UpdateModelAdapter(it, mapperMethod) }, table)
 }
 
-fun countAllRows(): CountByExampleHelper = { this }
-fun deleteAllRows(): DeleteByExampleHelper = { this }
-fun <T> selectAllRows(): SelectByExampleHelper<T> = { this }
-fun <T> selectAllRowsOrderedBy(vararg columns: SortSpecification): SelectByExampleHelper<T> = { orderBy(*columns) }
-fun updateAllRows(): UpdateByExampleHelper = { this }
+fun countAllRows(): CountHelper = { this }
+fun deleteAllRows(): DeleteHelper = { this }
+fun <T> selectAllRows(): SelectListHelper<T> = { this }
+fun <T> selectAllRowsOrderedBy(vararg columns: SortSpecification): SelectListHelper<T> = { orderBy(*columns) }
 
 fun <T : Any> SqlTable.column(name: String, type: KClass<T>): SqlColumn<T> =
         SqlColumn.of(name, this)
