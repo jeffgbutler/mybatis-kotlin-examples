@@ -73,7 +73,7 @@ internal class Example05Test {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
-            val rows = mapper.select(selectAllRows())
+            val rows = mapper.select { allRows() }
 
             assertThat(rows.size).isEqualTo(6)
         }
@@ -84,7 +84,7 @@ internal class Example05Test {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
-            val rows = mapper.select(selectAllRowsOrderedBy(firstName, lastName))
+            val rows = mapper.select { allRowsOrderedBy(firstName, lastName) }
 
             assertThat(rows.size).isEqualTo(6)
             assertThat(rows[0].firstName).isEqualTo("Bamm Bamm")
@@ -159,7 +159,7 @@ internal class Example05Test {
     fun testDeleteAllRows() {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val rows = mapper.delete(deleteAllRows())
+            val rows = mapper.delete { allRows() }
             assertThat(rows).isEqualTo(6)
         }
     }
@@ -350,7 +350,7 @@ internal class Example05Test {
     fun testCountAll() {
         sqlSessionFactory.openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val rows = mapper.count(countAllRows())
+            val rows = mapper.count { allRows() }
 
             assertThat(rows).isEqualTo(6L)
         }

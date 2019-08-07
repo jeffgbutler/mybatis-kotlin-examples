@@ -53,10 +53,9 @@ fun updateWithKotlinMapper(mapperMethod: (UpdateStatementProvider) -> Int, table
     return UpdateDSL.update({ UpdateModelAdapter(it, mapperMethod) }, table)
 }
 
-fun countAllRows(): CountHelper = { this }
-fun deleteAllRows(): DeleteHelper = { this }
-fun <T> selectAllRows(): SelectListHelper<T> = { this }
-fun <T> selectAllRowsOrderedBy(vararg columns: SortSpecification): SelectListHelper<T> = { orderBy(*columns) }
+fun DeleteDSL<DeleteModelAdapter>.allRows(): Buildable<DeleteModelAdapter> = this
+fun <T> QueryExpressionDSL<SelectModelAdapter<T>>.allRows(): Buildable<SelectModelAdapter<T>> = this
+fun <T> QueryExpressionDSL<SelectModelAdapter<T>>.allRowsOrderedBy(vararg columns: SortSpecification): Buildable<SelectModelAdapter<T>> = orderBy(*columns)
 
 fun <T : Any> SqlTable.column(name: String, type: KClass<T>): SqlColumn<T> =
         SqlColumn.of(name, this)
