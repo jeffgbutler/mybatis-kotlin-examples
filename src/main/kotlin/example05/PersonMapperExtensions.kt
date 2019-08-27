@@ -8,23 +8,22 @@ import example05.PersonDynamicSqlSupport.Person.firstName
 import example05.PersonDynamicSqlSupport.Person.id
 import example05.PersonDynamicSqlSupport.Person.lastName
 import example05.PersonDynamicSqlSupport.Person.occupation
-import org.mybatis.dynamic.sql.SqlBuilder
-import org.mybatis.dynamic.sql.SqlBuilder.count
 import org.mybatis.dynamic.sql.SqlBuilder.isEqualTo
-import org.mybatis.dynamic.sql.kotlin.*
-import org.mybatis.dynamic.sql.render.RenderingStrategy
 import org.mybatis.dynamic.sql.update.UpdateDSL
+import org.mybatis.dynamic.sql.update.UpdateModel
+import org.mybatis.dynamic.sql.util.kotlin.CountCompleter
+import org.mybatis.dynamic.sql.util.kotlin.DeleteCompleter
+import org.mybatis.dynamic.sql.util.kotlin.SelectCompleter
+import org.mybatis.dynamic.sql.util.kotlin.UpdateCompleter
+import org.mybatis.dynamic.sql.util.kotlin.mybatis3.insert
+import org.mybatis.dynamic.sql.util.kotlin.mybatis3.insertMultiple
+import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils
 
-fun PersonMapper.count(helper: CountHelper) =
-        helper(selectWithKotlinMapper(this::count, count())
-                .from(Person))
-                .build()
-                .execute()
+fun PersonMapper.count(completer: CountCompleter) =
+        MyBatis3Utils.count(this::count, Person, completer)
 
-fun PersonMapper.delete(helper: DeleteHelper) =
-        helper(deleteWithKotlinMapper(this::delete, Person))
-                .build()
-                .execute()
+fun PersonMapper.delete(completer: DeleteCompleter) =
+        MyBatis3Utils.deleteFrom(this::delete, Person, completer)
 
 fun PersonMapper.deleteByPrimaryKey(id_: Int) =
         delete {
@@ -32,56 +31,48 @@ fun PersonMapper.deleteByPrimaryKey(id_: Int) =
         }
 
 fun PersonMapper.insert(record: PersonRecord) =
-        insert(SqlBuilder.insert(record)
-                .into(Person)
-                .map(id).toProperty("id")
-                .map(firstName).toProperty("firstName")
-                .map(lastName).toProperty("lastName")
-                .map(birthDate).toProperty("birthDate")
-                .map(employed).toProperty("employed")
-                .map(occupation).toProperty("occupation")
-                .map(addressId).toProperty("addressId")
-                .build()
-                .render(RenderingStrategy.MYBATIS3))
+        insert(this::insert, record, Person) {
+            map(id).toProperty("id")
+            map(firstName).toProperty("firstName")
+            map(lastName).toProperty("lastName")
+            map(birthDate).toProperty("birthDate")
+            map(employed).toProperty("employed")
+            map(occupation).toProperty("occupation")
+            map(addressId).toProperty("addressId")
+        }
 
 fun PersonMapper.insertMultiple(vararg records: PersonRecord) =
-        insertMultiple(SqlBuilder.insertMultiple(*records)
-                .into(Person)
-                .map(id).toProperty("id")
-                .map(firstName).toProperty("firstName")
-                .map(lastName).toProperty("lastName")
-                .map(birthDate).toProperty("birthDate")
-                .map(employed).toProperty("employed")
-                .map(occupation).toProperty("occupation")
-                .map(addressId).toProperty("addressId")
-                .build()
-                .render(RenderingStrategy.MYBATIS3))
+        insertMultiple(records.toList())
 
-fun PersonMapper.selectOne(helper: SelectOneHelper<PersonRecord>) =
-        helper(selectWithKotlinMapper(this::selectOne, id.`as`("A_ID"), firstName, lastName, birthDate, employed, occupation, addressId)
-                .from(Person))
-                .build()
-                .execute()
+fun PersonMapper.insertMultiple(records: List<PersonRecord>) =
+        insertMultiple(this::insertMultiple, records, Person) {
+            map(id).toProperty("id")
+            map(firstName).toProperty("firstName")
+            map(lastName).toProperty("lastName")
+            map(birthDate).toProperty("birthDate")
+            map(employed).toProperty("employed")
+            map(occupation).toProperty("occupation")
+            map(addressId).toProperty("addressId")
+        }
 
-fun PersonMapper.select(helper: SelectListHelper<PersonRecord>) =
-        helper(selectWithKotlinMapper(this::selectMany, id.`as`("A_ID"), firstName, lastName, birthDate, employed, occupation, addressId)
-                .from(Person))
-                .build()
-                .execute()
+private val selectList = arrayOf(id.`as`("A_ID"), firstName, lastName, birthDate, employed, occupation, addressId)
 
-fun PersonMapper.selectDistinct(helper: SelectListHelper<PersonRecord>) =
-        helper(selectDistinctWithKotlinMapper(this::selectMany, id.`as`("A_ID"), firstName, lastName, birthDate, employed, occupation, addressId)
-                .from(Person))
-                .build()
-                .execute()
+fun PersonMapper.selectOne(completer: SelectCompleter) =
+        MyBatis3Utils.selectOne(this::selectOne, selectList, Person, completer)
+
+fun PersonMapper.select(completer: SelectCompleter): List<PersonRecord> =
+        MyBatis3Utils.selectList(this::selectMany, selectList, Person, completer)
+
+fun PersonMapper.selectDistinct(completer: SelectCompleter): List<PersonRecord> =
+        MyBatis3Utils.selectDistinct(this::selectMany, selectList, Person, completer)
 
 fun PersonMapper.selectByPrimaryKey(id_: Int) =
         selectOne {
             where(id, isEqualTo(id_))
         }
 
-fun PersonMapper.update(helper: UpdateHelper) =
-        helper(updateWithKotlinMapper(this::update, Person)).build().execute()
+fun PersonMapper.update(completer: UpdateCompleter) =
+        MyBatis3Utils.update(this::update, Person, completer)
 
 fun PersonMapper.updateByPrimaryKey(record: PersonRecord) =
         update {
@@ -105,7 +96,7 @@ fun PersonMapper.updateByPrimaryKeySelective(record: PersonRecord) =
             where(id, isEqualTo(record::id))
         }
 
-fun UpdateDSL<UpdateModelAdapter>.setAll(record: PersonRecord) =
+fun UpdateDSL<UpdateModel>.setAll(record: PersonRecord) =
         apply {
             set(id).equalTo(record::id)
             set(firstName).equalTo(record::firstName)
@@ -116,7 +107,7 @@ fun UpdateDSL<UpdateModelAdapter>.setAll(record: PersonRecord) =
             set(addressId).equalTo(record::addressId)
         }
 
-fun UpdateDSL<UpdateModelAdapter>.setSelective(record: PersonRecord) =
+fun UpdateDSL<UpdateModel>.setSelective(record: PersonRecord) =
         apply {
             set(id).equalToWhenPresent(record::id)
             set(firstName).equalToWhenPresent(record::firstName)
