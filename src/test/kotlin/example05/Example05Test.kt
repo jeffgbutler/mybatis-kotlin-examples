@@ -16,6 +16,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mybatis.dynamic.sql.SqlBuilder.*
 import org.mybatis.dynamic.sql.util.kotlin.allRows
+import org.mybatis.dynamic.sql.util.kotlin.and
+import org.mybatis.dynamic.sql.util.kotlin.or
 import util.YesNoTypeHandler
 import java.io.InputStreamReader
 import java.sql.DriverManager
@@ -47,8 +49,8 @@ internal class Example05Test {
 
             val rows = mapper.select {
                 where(id, isEqualTo(1))
-                        .or(occupation, isNull())
-                        .orderBy(id)
+                or(occupation, isNull())
+                orderBy(id)
             }
 
             assertThat(rows.size).isEqualTo(3)
@@ -107,7 +109,7 @@ internal class Example05Test {
 
             val rows = mapper.selectDistinct {
                 where(id, isGreaterThan(1))
-                        .or(occupation, isNull())
+                or(occupation, isNull())
             }
 
             assertThat(rows.size).isEqualTo(5)
@@ -121,7 +123,7 @@ internal class Example05Test {
 
             val rows = mapper.select {
                 where(employed, isEqualTo(false))
-                        .orderBy(id)
+                orderBy(id)
             }
 
             assertThat(rows.size).isEqualTo(2)
@@ -252,7 +254,8 @@ internal class Example05Test {
             var rows = mapper.insert(record)
             assertThat(rows).isEqualTo(1)
 
-            val updateRecord = PersonRecord(record.id, record.firstName, record.lastName, record.birthDate, record.employed, "Programmer", record.addressId)
+            val updateRecord = PersonRecord(record.id, record.firstName, record.lastName, record.birthDate,
+                    record.employed, "Programmer", record.addressId)
             rows = mapper.updateByPrimaryKeySelective(updateRecord)
             assertThat(rows).isEqualTo(1)
 
@@ -299,7 +302,7 @@ internal class Example05Test {
             rows = mapper.update {
                 setAll(updateRecord)
                 where(id, isEqualTo(100))
-                        .and(firstName, isEqualTo("Joe"))
+                and(firstName, isEqualTo("Joe"))
             }
 
             assertThat(rows).isEqualTo(1)
