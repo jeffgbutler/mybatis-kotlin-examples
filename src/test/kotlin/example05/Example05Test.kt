@@ -300,7 +300,7 @@ internal class Example05Test {
 
             val updateRecord = record.copy(occupation = "Programmer")
             rows = mapper.update {
-                updateAll(updateRecord)
+                updateAllColumns(updateRecord)
                 where(id, isEqualTo(100))
                 and(firstName, isEqualTo("Joe"))
             }
@@ -324,7 +324,7 @@ internal class Example05Test {
             val updateRecord = PersonRecord(occupation = "Programmer")
 
             rows = mapper.update {
-                updateSelective(updateRecord)
+                updateSelectiveColumns(updateRecord)
             }
 
             assertThat(rows).isEqualTo(7)

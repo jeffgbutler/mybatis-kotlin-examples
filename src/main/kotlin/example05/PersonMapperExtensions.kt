@@ -96,7 +96,7 @@ fun PersonMapper.updateByPrimaryKeySelective(record: PersonRecord) =
             where(id, isEqualTo(record::id))
         }
 
-fun UpdateDSL<UpdateModel>.updateAll(record: PersonRecord) =
+fun UpdateDSL<UpdateModel>.updateAllColumns(record: PersonRecord) =
         apply {
             set(id).equalTo(record::id)
             set(firstName).equalTo(record::firstName)
@@ -107,7 +107,7 @@ fun UpdateDSL<UpdateModel>.updateAll(record: PersonRecord) =
             set(addressId).equalTo(record::addressId)
         }
 
-fun UpdateDSL<UpdateModel>.updateSelective(record: PersonRecord) =
+fun UpdateDSL<UpdateModel>.updateSelectiveColumns(record: PersonRecord) =
         apply {
             set(id).equalToWhenPresent(record::id)
             set(firstName).equalToWhenPresent(record::firstName)
