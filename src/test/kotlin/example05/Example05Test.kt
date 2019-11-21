@@ -15,9 +15,6 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mybatis.dynamic.sql.SqlBuilder.*
-import org.mybatis.dynamic.sql.util.kotlin.allRows
-import org.mybatis.dynamic.sql.util.kotlin.and
-import org.mybatis.dynamic.sql.util.kotlin.or
 import util.YesNoTypeHandler
 import java.io.InputStreamReader
 import java.sql.DriverManager
