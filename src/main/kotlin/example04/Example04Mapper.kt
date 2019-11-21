@@ -1,7 +1,7 @@
 package example04
 
-import org.apache.ibatis.annotations.*
-import util.YesNoTypeHandler
+import org.apache.ibatis.annotations.ResultMap
+import org.apache.ibatis.annotations.Select
 
 interface Example04Mapper {
 

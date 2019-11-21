@@ -1,6 +1,8 @@
 package example03
 
-import org.apache.ibatis.annotations.*
+import org.apache.ibatis.annotations.Result
+import org.apache.ibatis.annotations.Results
+import org.apache.ibatis.annotations.Select
 import util.YesNoTypeHandler
 
 interface Example03Mapper {
@@ -14,9 +16,9 @@ interface Example03Mapper {
         Result(column = "id", property = "id"),
         Result(column = "first_name", property = "firstName"),
         Result(column = "last_name", property = "lastName"),
-        Result(column = "birth_date", property="birthDate"),
+        Result(column = "birth_date", property = "birthDate"),
         Result(column = "employed", property = "employed", typeHandler = YesNoTypeHandler::class),
-        Result(column = "occupation", property="occupation"),
+        Result(column = "occupation", property = "occupation"),
         Result(column = "address_id", property = "address.id"),
         Result(column = "street_address", property = "address.streetAddress"),
         Result(column = "city", property = "address.city"),

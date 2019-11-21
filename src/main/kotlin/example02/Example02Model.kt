@@ -15,4 +15,11 @@ import java.util.*
  * We also need to use the @AutomapConstructor annotation to enable advanced auto mapping in MyBatis
  *
  */
-data class Person @AutomapConstructor constructor(val id: Int, val firstName: String, val lastName: String, val birthDate: Date, val employed: Boolean, val occupation: String?)
+data class Person @AutomapConstructor constructor(
+    val id: Int,
+    val firstName: String,
+    val lastName: String,
+    val birthDate: Date,
+    val employed: Boolean,
+    val occupation: String?
+)

@@ -1,6 +1,6 @@
 package example01
 
-import org.apache.ibatis.annotations.*
+import org.apache.ibatis.annotations.Select
 
 interface Example01Mapper {
 

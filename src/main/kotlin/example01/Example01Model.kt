@@ -11,4 +11,11 @@ import java.sql.Date
  * 2. birthDate here is java.sql.Date so the constructor can match via MyBatis' automatic constructor mapping.  This
  *    is not ideal - it can be resolved with @ConstructorArgs annotation as shown in example02
  */
-data class Person (val id: Int, val firstName: String, val lastName: String, val birthDate: Date, val employed: String, val occupation: String?)
+data class Person(
+    val id: Int,
+    val firstName: String,
+    val lastName: String,
+    val birthDate: Date,
+    val employed: String,
+    val occupation: String?
+)

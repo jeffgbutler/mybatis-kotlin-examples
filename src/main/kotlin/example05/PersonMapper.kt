@@ -20,15 +20,17 @@ interface PersonMapper {
     fun update(updateStatement: UpdateStatementProvider): Int
 
     @SelectProvider(type = SqlProviderAdapter::class, method = "select")
-    @Results(id = "PersonRecordResult", value = [
-        Result(column = "a_id", property = "id"),
-        Result(column = "first_name", property = "firstName"),
-        Result(column = "last_name", property = "lastName"),
-        Result(column = "birth_date", property = "birthDate"),
-        Result(column = "employed", property = "employed", typeHandler = YesNoTypeHandler::class),
-        Result(column = "occupation", property = "occupation"),
-        Result(column = "address_id", property = "addressId")
-    ])
+    @Results(
+        id = "PersonRecordResult", value = [
+            Result(column = "a_id", property = "id"),
+            Result(column = "first_name", property = "firstName"),
+            Result(column = "last_name", property = "lastName"),
+            Result(column = "birth_date", property = "birthDate"),
+            Result(column = "employed", property = "employed", typeHandler = YesNoTypeHandler::class),
+            Result(column = "occupation", property = "occupation"),
+            Result(column = "address_id", property = "addressId")
+        ]
+    )
     fun selectMany(selectStatement: SelectStatementProvider): List<PersonRecord>
 
     @SelectProvider(type = SqlProviderAdapter::class, method = "select")
