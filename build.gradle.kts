@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.3.71"
+    kotlin("jvm") version "1.4.10"
 }
 
 group = "com.github.jeffgbutler"
@@ -17,11 +17,16 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation ("org.mybatis:mybatis:3.5.4")
-    implementation ("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.1.4")
-    testImplementation ("org.assertj:assertj-core:3.16.0")
-    testImplementation ("org.junit.jupiter:junit-jupiter-api:5.6.2")
-    testImplementation ("org.hsqldb:hsqldb:2.5.0")
+    implementation ("org.mybatis:mybatis:3.5.5")
+    implementation ("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.2.1")
+    testImplementation ("org.assertj:assertj-core:3.17.2")
+    testImplementation ("org.junit.jupiter:junit-jupiter-api:5.7.0")
+    testImplementation ("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+    testImplementation ("org.hsqldb:hsqldb:2.5.1")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 tasks.withType<KotlinCompile> {
