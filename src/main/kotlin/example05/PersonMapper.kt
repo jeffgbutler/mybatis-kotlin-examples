@@ -1,24 +1,15 @@
 package example05
 
 import org.apache.ibatis.annotations.*
-import org.mybatis.dynamic.sql.delete.render.DeleteStatementProvider
-import org.mybatis.dynamic.sql.insert.render.InsertStatementProvider
-import org.mybatis.dynamic.sql.insert.render.MultiRowInsertStatementProvider
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider
-import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter
+import org.mybatis.dynamic.sql.util.mybatis3.CommonCountMapper
+import org.mybatis.dynamic.sql.util.mybatis3.CommonDeleteMapper
+import org.mybatis.dynamic.sql.util.mybatis3.CommonInsertMapper
+import org.mybatis.dynamic.sql.util.mybatis3.CommonUpdateMapper
 import util.YesNoTypeHandler
 
-interface PersonMapper {
-    @InsertProvider(type = SqlProviderAdapter::class, method = "insert")
-    fun insert(insertStatement: InsertStatementProvider<PersonRecord>): Int
-
-    @InsertProvider(type = SqlProviderAdapter::class, method = "insertMultiple")
-    fun insertMultiple(multipleInsertStatement: MultiRowInsertStatementProvider<PersonRecord>): Int
-
-    @UpdateProvider(type = SqlProviderAdapter::class, method = "update")
-    fun update(updateStatement: UpdateStatementProvider): Int
-
+interface PersonMapper : CommonCountMapper, CommonDeleteMapper, CommonInsertMapper<PersonRecord>, CommonUpdateMapper {
     @SelectProvider(type = SqlProviderAdapter::class, method = "select")
     @Results(
         id = "PersonRecordResult", value = [
@@ -36,10 +27,4 @@ interface PersonMapper {
     @SelectProvider(type = SqlProviderAdapter::class, method = "select")
     @ResultMap("PersonRecordResult")
     fun selectOne(selectStatement: SelectStatementProvider): PersonRecord?
-
-    @DeleteProvider(type = SqlProviderAdapter::class, method = "delete")
-    fun delete(deleteStatement: DeleteStatementProvider): Int
-
-    @SelectProvider(type = SqlProviderAdapter::class, method = "select")
-    fun count(selectStatement: SelectStatementProvider): Long
 }
