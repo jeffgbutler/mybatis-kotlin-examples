@@ -58,6 +58,7 @@ internal class Example05Test {
             assertThat(rows[0].employed).isTrue()
             assertThat(rows[0].occupation).isEqualTo("Brontosaurus Operator")
             assertThat(rows[0].addressId).isEqualTo(1)
+            assertThat(rows[0].parentId).isNull()
         }
     }
 

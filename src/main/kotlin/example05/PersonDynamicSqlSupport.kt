@@ -13,5 +13,6 @@ object PersonDynamicSqlSupport {
         val employed = column<Boolean>("employed", JDBCType.VARCHAR, "util.YesNoTypeHandler")
         val occupation = column<String>("occupation", JDBCType.VARCHAR)
         val addressId = column<Int>("address_id", JDBCType.INTEGER)
+        val parentId = column<Int>("parent_id", JDBCType.INTEGER)
     }
 }

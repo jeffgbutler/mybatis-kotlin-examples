@@ -9,5 +9,6 @@ data class PersonRecord(
     val birthDate: Date? = null,
     val employed: Boolean? = null,
     val occupation: String? = null,
-    val addressId: Int? = null
+    val addressId: Int? = null,
+    val parentId: Int? = null
 )

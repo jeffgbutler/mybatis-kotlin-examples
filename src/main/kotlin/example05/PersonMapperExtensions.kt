@@ -8,6 +8,7 @@ import example05.PersonDynamicSqlSupport.Person.firstName
 import example05.PersonDynamicSqlSupport.Person.id
 import example05.PersonDynamicSqlSupport.Person.lastName
 import example05.PersonDynamicSqlSupport.Person.occupation
+import example05.PersonDynamicSqlSupport.Person.parentId
 import org.mybatis.dynamic.sql.SqlBuilder.isEqualTo
 import org.mybatis.dynamic.sql.util.kotlin.*
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.*
@@ -32,6 +33,7 @@ fun PersonMapper.insert(record: PersonRecord) =
         map(employed).toProperty("employed")
         map(occupation).toProperty("occupation")
         map(addressId).toProperty("addressId")
+        map(parentId).toProperty("parentId")
     }
 
 fun PersonMapper.insertMultiple(vararg records: PersonRecord) =
@@ -46,6 +48,7 @@ fun PersonMapper.insertMultiple(records: List<PersonRecord>) =
         map(employed).toProperty("employed")
         map(occupation).toProperty("occupation")
         map(addressId).toProperty("addressId")
+        map(parentId).toProperty("parentId")
     }
 
 private val columnList = listOf(id.`as`("A_ID"), firstName, lastName, birthDate, employed, occupation, addressId)
@@ -75,6 +78,7 @@ fun PersonMapper.updateByPrimaryKey(record: PersonRecord) =
         set(employed).equalTo(record::employed)
         set(occupation).equalTo(record::occupation)
         set(addressId).equalTo(record::addressId)
+        set(parentId).equalTo(record::parentId)
         where(id, isEqualTo(record::id))
     }
 
@@ -86,6 +90,7 @@ fun PersonMapper.updateByPrimaryKeySelective(record: PersonRecord) =
         set(employed).equalToWhenPresent(record::employed)
         set(occupation).equalToWhenPresent(record::occupation)
         set(addressId).equalToWhenPresent(record::addressId)
+        set(parentId).equalToWhenPresent(record::parentId)
         where(id, isEqualTo(record::id))
     }
 
@@ -98,6 +103,7 @@ fun KotlinUpdateBuilder.updateAllColumns(record: PersonRecord) =
         set(employed).equalTo(record::employed)
         set(occupation).equalTo(record::occupation)
         set(addressId).equalTo(record::addressId)
+        set(parentId).equalTo(record::parentId)
     }
 
 fun KotlinUpdateBuilder.updateSelectiveColumns(record: PersonRecord) =
@@ -109,4 +115,5 @@ fun KotlinUpdateBuilder.updateSelectiveColumns(record: PersonRecord) =
         set(employed).equalToWhenPresent(record::employed)
         set(occupation).equalToWhenPresent(record::occupation)
         set(addressId).equalToWhenPresent(record::addressId)
+        set(parentId).equalToWhenPresent(record::parentId)
     }

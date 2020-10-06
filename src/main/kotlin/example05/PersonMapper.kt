@@ -19,7 +19,8 @@ interface PersonMapper : CommonCountMapper, CommonDeleteMapper, CommonInsertMapp
             Result(column = "birth_date", property = "birthDate"),
             Result(column = "employed", property = "employed", typeHandler = YesNoTypeHandler::class),
             Result(column = "occupation", property = "occupation"),
-            Result(column = "address_id", property = "addressId")
+            Result(column = "address_id", property = "addressId"),
+            Result(column = "parent_id", property = "parentId")
         ]
     )
     fun selectMany(selectStatement: SelectStatementProvider): List<PersonRecord>
