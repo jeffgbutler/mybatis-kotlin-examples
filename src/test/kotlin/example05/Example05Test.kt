@@ -1,10 +1,12 @@
 package example05
 
+import example05.PersonDynamicSqlSupport.person
 import example05.PersonDynamicSqlSupport.employed
 import example05.PersonDynamicSqlSupport.firstName
 import example05.PersonDynamicSqlSupport.id
 import example05.PersonDynamicSqlSupport.lastName
 import example05.PersonDynamicSqlSupport.occupation
+import example05.PersonDynamicSqlSupport.parentId
 import org.apache.ibatis.datasource.unpooled.UnpooledDataSource
 import org.apache.ibatis.jdbc.ScriptRunner
 import org.apache.ibatis.mapping.Environment
@@ -15,6 +17,8 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mybatis.dynamic.sql.SqlBuilder.*
+import org.mybatis.dynamic.sql.render.RenderingStrategies
+import org.mybatis.dynamic.sql.util.mybatis3.CommonSelectMapper
 import util.YesNoTypeHandler
 import java.io.InputStreamReader
 import java.sql.DriverManager
@@ -36,6 +40,7 @@ internal class Example05Test {
         val config = Configuration(environment)
         config.typeHandlerRegistry.register(YesNoTypeHandler::class.java)
         config.addMapper(PersonMapper::class.java)
+        config.addMapper(CommonSelectMapper::class.java)
         return SqlSessionFactoryBuilder().build(config).openSession()
     }
 
@@ -352,6 +357,34 @@ internal class Example05Test {
         }
     }
 
+    @Test
+    fun testSelfJoin() {
+        openSession().use { session ->
+            val mapper = session.getMapper(CommonSelectMapper::class.java)
+
+            val person2 = PersonDynamicSqlSupport.Person()
+
+            // get Bamm Bamm's parent - should be Barney
+            val selectStatement = select(id, firstName, parentId)
+                .from(person, "p1")
+                .join(person2, "p2").on(id, equalTo(person2.parentId))
+                .where(person2.id, isEqualTo(6))
+                .build()
+                .render(RenderingStrategies.MYBATIS3)
+
+            val expectedStatement = ("select p1.id, p1.first_name, p1.parent_id"
+                    + " from Person p1 join Person p2 on p1.id = p2.parent_id"
+                    + " where p2.id = #{parameters.p1,jdbcType=INTEGER}")
+            assertThat(selectStatement.selectStatement).isEqualTo(expectedStatement)
+
+            val row = mapper.selectOneMappedRow(selectStatement)
+
+            assertThat(row).isNotNull()
+            assertThat(row).containsEntry("ID", 4)
+            assertThat(row).containsEntry("FIRST_NAME", "Barney")
+            assertThat(row).doesNotContainKey("PARENT_ID")
+        }
+    }
     companion object {
         const val JDBC_URL = "jdbc:hsqldb:mem:aname"
         const val JDBC_DRIVER = "org.hsqldb.jdbcDriver"
