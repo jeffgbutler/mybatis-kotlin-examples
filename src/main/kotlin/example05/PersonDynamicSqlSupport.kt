@@ -5,7 +5,17 @@ import java.sql.JDBCType
 import java.util.*
 
 object PersonDynamicSqlSupport {
-    object Person : SqlTable("Person") {
+    val person = Person()
+    val id = person.id
+    val firstName = person.firstName
+    val lastName = person.lastName
+    val birthDate = person.birthDate
+    val employed = person.employed
+    val occupation = person.occupation
+    val addressId = person.addressId
+    val parentId = person.parentId
+
+    class Person : SqlTable("Person") {
         val id = column<Int>("id", JDBCType.INTEGER)
         val firstName = column<String>("first_name", JDBCType.VARCHAR)
         val lastName = column<String>("last_name", JDBCType.VARCHAR)

@@ -1,10 +1,10 @@
 package example05
 
-import example05.PersonDynamicSqlSupport.Person.employed
-import example05.PersonDynamicSqlSupport.Person.firstName
-import example05.PersonDynamicSqlSupport.Person.id
-import example05.PersonDynamicSqlSupport.Person.lastName
-import example05.PersonDynamicSqlSupport.Person.occupation
+import example05.PersonDynamicSqlSupport.employed
+import example05.PersonDynamicSqlSupport.firstName
+import example05.PersonDynamicSqlSupport.id
+import example05.PersonDynamicSqlSupport.lastName
+import example05.PersonDynamicSqlSupport.occupation
 import org.apache.ibatis.datasource.unpooled.UnpooledDataSource
 import org.apache.ibatis.jdbc.ScriptRunner
 import org.apache.ibatis.mapping.Environment

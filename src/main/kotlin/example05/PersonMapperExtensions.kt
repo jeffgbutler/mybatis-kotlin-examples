@@ -1,23 +1,23 @@
 package example05
 
-import example05.PersonDynamicSqlSupport.Person
-import example05.PersonDynamicSqlSupport.Person.addressId
-import example05.PersonDynamicSqlSupport.Person.birthDate
-import example05.PersonDynamicSqlSupport.Person.employed
-import example05.PersonDynamicSqlSupport.Person.firstName
-import example05.PersonDynamicSqlSupport.Person.id
-import example05.PersonDynamicSqlSupport.Person.lastName
-import example05.PersonDynamicSqlSupport.Person.occupation
-import example05.PersonDynamicSqlSupport.Person.parentId
+import example05.PersonDynamicSqlSupport.person
+import example05.PersonDynamicSqlSupport.addressId
+import example05.PersonDynamicSqlSupport.birthDate
+import example05.PersonDynamicSqlSupport.employed
+import example05.PersonDynamicSqlSupport.firstName
+import example05.PersonDynamicSqlSupport.id
+import example05.PersonDynamicSqlSupport.lastName
+import example05.PersonDynamicSqlSupport.occupation
+import example05.PersonDynamicSqlSupport.parentId
 import org.mybatis.dynamic.sql.SqlBuilder.isEqualTo
 import org.mybatis.dynamic.sql.util.kotlin.*
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.*
 
 fun PersonMapper.count(completer: CountCompleter) =
-    countFrom(this::count, Person, completer)
+    countFrom(this::count, person, completer)
 
 fun PersonMapper.delete(completer: DeleteCompleter) =
-    deleteFrom(this::delete, Person, completer)
+    deleteFrom(this::delete, person, completer)
 
 fun PersonMapper.deleteByPrimaryKey(id_: Int) =
     delete {
@@ -25,7 +25,7 @@ fun PersonMapper.deleteByPrimaryKey(id_: Int) =
     }
 
 fun PersonMapper.insert(record: PersonRecord) =
-    insert(this::insert, record, Person) {
+    insert(this::insert, record, person) {
         map(id).toProperty("id")
         map(firstName).toProperty("firstName")
         map(lastName).toProperty("lastName")
@@ -40,7 +40,7 @@ fun PersonMapper.insertMultiple(vararg records: PersonRecord) =
     insertMultiple(records.toList())
 
 fun PersonMapper.insertMultiple(records: List<PersonRecord>) =
-    insertMultiple(this::insertMultiple, records, Person) {
+    insertMultiple(this::insertMultiple, records, person) {
         map(id).toProperty("id")
         map(firstName).toProperty("firstName")
         map(lastName).toProperty("lastName")
@@ -54,13 +54,13 @@ fun PersonMapper.insertMultiple(records: List<PersonRecord>) =
 private val columnList = listOf(id.`as`("A_ID"), firstName, lastName, birthDate, employed, occupation, addressId)
 
 fun PersonMapper.selectOne(completer: SelectCompleter) =
-    selectOne(this::selectOne, columnList, Person, completer)
+    selectOne(this::selectOne, columnList, person, completer)
 
 fun PersonMapper.select(completer: SelectCompleter) =
-    selectList(this::selectMany, columnList, Person, completer)
+    selectList(this::selectMany, columnList, person, completer)
 
 fun PersonMapper.selectDistinct(completer: SelectCompleter) =
-    selectDistinct(this::selectMany, columnList, Person, completer)
+    selectDistinct(this::selectMany, columnList, person, completer)
 
 fun PersonMapper.selectByPrimaryKey(id_: Int) =
     selectOne {
@@ -68,7 +68,7 @@ fun PersonMapper.selectByPrimaryKey(id_: Int) =
     }
 
 fun PersonMapper.update(completer: UpdateCompleter) =
-    update(this::update, Person, completer)
+    update(this::update, person, completer)
 
 fun PersonMapper.updateByPrimaryKey(record: PersonRecord) =
     update {
