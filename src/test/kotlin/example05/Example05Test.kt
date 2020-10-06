@@ -1,12 +1,12 @@
 package example05
 
-import example05.PersonDynamicSqlSupport.person
 import example05.PersonDynamicSqlSupport.employed
 import example05.PersonDynamicSqlSupport.firstName
 import example05.PersonDynamicSqlSupport.id
 import example05.PersonDynamicSqlSupport.lastName
 import example05.PersonDynamicSqlSupport.occupation
 import example05.PersonDynamicSqlSupport.parentId
+import example05.PersonDynamicSqlSupport.person
 import org.apache.ibatis.datasource.unpooled.UnpooledDataSource
 import org.apache.ibatis.jdbc.ScriptRunner
 import org.apache.ibatis.mapping.Environment
@@ -193,8 +193,9 @@ internal class Example05Test {
             val mapper = session.getMapper(PersonMapper::class.java)
 
             val rows = mapper.insertMultiple(
-                    PersonRecord(10, "Joe", "Jones", Date(), true, "Developer", 22),
-                    PersonRecord(11, "Sam", "Smith", Date(), true, "Architect", 23))
+                PersonRecord(10, "Joe", "Jones", Date(), true, "Developer", 22),
+                PersonRecord(11, "Sam", "Smith", Date(), true, "Architect", 23)
+            )
             assertThat(rows).isEqualTo(2)
         }
     }
@@ -257,8 +258,10 @@ internal class Example05Test {
             var rows = mapper.insert(record)
             assertThat(rows).isEqualTo(1)
 
-            val updateRecord = PersonRecord(record.id, record.firstName, record.lastName, record.birthDate,
-                    record.employed, "Programmer", record.addressId)
+            val updateRecord = PersonRecord(
+                record.id, record.firstName, record.lastName, record.birthDate,
+                record.employed, "Programmer", record.addressId
+            )
             rows = mapper.updateByPrimaryKeySelective(updateRecord)
             assertThat(rows).isEqualTo(1)
 
@@ -385,6 +388,7 @@ internal class Example05Test {
             assertThat(row).doesNotContainKey("PARENT_ID")
         }
     }
+
     companion object {
         const val JDBC_URL = "jdbc:hsqldb:mem:aname"
         const val JDBC_DRIVER = "org.hsqldb.jdbcDriver"
