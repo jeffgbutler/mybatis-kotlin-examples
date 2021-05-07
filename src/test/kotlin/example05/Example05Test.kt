@@ -279,10 +279,7 @@ internal class Example05Test {
             var rows = mapper.insert(record)
             assertThat(rows).isEqualTo(1)
 
-            val updateRecord = PersonRecord(
-                record.id, record.firstName, record.lastName, record.birthDate,
-                record.employed, "Programmer", record.addressId
-            )
+            val updateRecord = record.copy(occupation = "Programmer")
             rows = mapper.updateByPrimaryKeySelective(updateRecord)
             assertThat(rows).isEqualTo(1)
 
