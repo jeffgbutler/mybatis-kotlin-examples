@@ -16,8 +16,12 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mybatis.dynamic.sql.SqlBuilder.*
-import org.mybatis.dynamic.sql.render.RenderingStrategies
+import org.mybatis.dynamic.sql.util.kotlin.elements.equalTo
+import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
+import org.mybatis.dynamic.sql.util.kotlin.elements.isGreaterThan
+import org.mybatis.dynamic.sql.util.kotlin.elements.isIn
+import org.mybatis.dynamic.sql.util.kotlin.elements.isNull
+import org.mybatis.dynamic.sql.util.kotlin.mybatis3.select
 import org.mybatis.dynamic.sql.util.mybatis3.CommonSelectMapper
 import util.YesNoTypeHandler
 import java.io.InputStreamReader
@@ -32,7 +36,7 @@ internal class Example05Test {
         DriverManager.getConnection(JDBC_URL, "sa", "").use { connection ->
             val sr = ScriptRunner(connection)
             sr.setLogWriter(null)
-            sr.runScript(InputStreamReader(script))
+            sr.runScript(InputStreamReader(script!!))
         }
 
         val ds = UnpooledDataSource(JDBC_DRIVER, JDBC_URL, "sa", "")
@@ -59,8 +63,8 @@ internal class Example05Test {
             assertThat(rows[0].id).isEqualTo(1)
             assertThat(rows[0].firstName).isEqualTo("Fred")
             assertThat(rows[0].lastName).isEqualTo("Flintstone")
-            assertThat(rows[0].birthDate).isNotNull()
-            assertThat(rows[0].employed).isTrue()
+            assertThat(rows[0].birthDate).isNotNull
+            assertThat(rows[0].employed).isTrue
             assertThat(rows[0].occupation).isEqualTo("Brontosaurus Operator")
             assertThat(rows[0].addressId).isEqualTo(1)
             assertThat(rows[0].parentId).isNull()
@@ -368,12 +372,13 @@ internal class Example05Test {
             val person2 = PersonDynamicSqlSupport.Person()
 
             // get Bamm Bamm's parent - should be Barney
-            val selectStatement = select(id, firstName, parentId)
-                .from(person, "p1")
-                .join(person2, "p2").on(id, equalTo(person2.parentId))
-                .where(person2.id, isEqualTo(6))
-                .build()
-                .render(RenderingStrategies.MYBATIS3)
+            val selectStatement = select(id, firstName, parentId) {
+                from(person, "p1")
+                join(person2, "p2") {
+                    on(id, equalTo(person2.parentId))
+                }
+                where(person2.id, isEqualTo(6))
+            }
 
             val expectedStatement = ("select p1.id, p1.first_name, p1.parent_id"
                     + " from Person p1 join Person p2 on p1.id = p2.parent_id"
@@ -382,7 +387,7 @@ internal class Example05Test {
 
             val row = mapper.selectOneMappedRow(selectStatement)
 
-            assertThat(row).isNotNull()
+            assertThat(row).isNotNull
             assertThat(row).containsEntry("ID", 4)
             assertThat(row).containsEntry("FIRST_NAME", "Barney")
             assertThat(row).doesNotContainKey("PARENT_ID")
