@@ -12,6 +12,11 @@ import org.mybatis.dynamic.sql.util.mybatis3.CommonInsertMapper
 import org.mybatis.dynamic.sql.util.mybatis3.CommonUpdateMapper
 import util.YesNoTypeHandler
 
+// This mapper uses the common base mappers supplied by MyBatis Dynamic SQL.
+// Use of the common insert mapper is appropriate when there are NOT generated values in the table.
+// In this case, only the select methods need to be written because we need to supply a
+// result map.
+
 interface PersonMapper : CommonCountMapper, CommonDeleteMapper, CommonInsertMapper<PersonRecord>, CommonUpdateMapper {
     @SelectProvider(type = SqlProviderAdapter::class, method = "select")
     @Results(

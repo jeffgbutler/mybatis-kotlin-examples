@@ -17,6 +17,14 @@ import org.mybatis.dynamic.sql.util.mybatis3.CommonCountMapper
 import org.mybatis.dynamic.sql.util.mybatis3.CommonDeleteMapper
 import org.mybatis.dynamic.sql.util.mybatis3.CommonUpdateMapper
 
+// This mapper uses the common base mappers supplied by MyBatis Dynamic SQL.
+// However, this mapper does NOT use the common insert mapper. When there are generated values
+// in the table you must write your own insert methods and supply the @Options
+// annotation if you with to retrieve generated values after the insert. MyBatis supports
+// returning generated keys from any type of insert statement (single row, multi-row, and batch).
+// The various insert statements below show how to code the @Options annotation properly
+// for each case.
+
 interface GeneratedAlwaysMapper: CommonCountMapper, CommonDeleteMapper, CommonUpdateMapper {
     @InsertProvider(type = SqlProviderAdapter::class, method = "insert")
     @Options(useGeneratedKeys = true, keyProperty = "row.id,row.fullName", keyColumn = "id,full_name")
