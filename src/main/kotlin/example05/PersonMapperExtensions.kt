@@ -18,6 +18,7 @@ import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.countFrom
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.deleteFrom
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.insert
+import org.mybatis.dynamic.sql.util.kotlin.mybatis3.insertBatch
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.insertMultiple
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.selectDistinct
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.selectList
@@ -37,6 +38,21 @@ fun PersonMapper.deleteByPrimaryKey(id_: Int) =
 
 fun PersonMapper.insert(row: PersonRecord) =
     insert(this::insert, row, person) {
+        map(id).toProperty("id")
+        map(firstName).toProperty("firstName")
+        map(lastName).toProperty("lastName")
+        map(birthDate).toProperty("birthDate")
+        map(employed).toProperty("employed")
+        map(occupation).toProperty("occupation")
+        map(addressId).toProperty("addressId")
+        map(parentId).toProperty("parentId")
+    }
+
+fun PersonMapper.insertBatch(vararg records: PersonRecord) =
+    insertBatch(records.toList())
+
+fun PersonMapper.insertBatch(records: List<PersonRecord>) =
+    insertBatch(this::insert, records, person) {
         map(id).toProperty("id")
         map(firstName).toProperty("firstName")
         map(lastName).toProperty("lastName")

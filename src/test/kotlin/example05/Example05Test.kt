@@ -11,6 +11,7 @@ import org.apache.ibatis.datasource.unpooled.UnpooledDataSource
 import org.apache.ibatis.jdbc.ScriptRunner
 import org.apache.ibatis.mapping.Environment
 import org.apache.ibatis.session.Configuration
+import org.apache.ibatis.session.ExecutorType
 import org.apache.ibatis.session.SqlSession
 import org.apache.ibatis.session.SqlSessionFactoryBuilder
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory
@@ -30,7 +31,7 @@ import java.util.*
 
 internal class Example05Test {
 
-    private fun openSession(): SqlSession {
+    private fun openSession(executorType: ExecutorType = ExecutorType.REUSE): SqlSession {
         Class.forName(JDBC_DRIVER)
         val script = javaClass.getResourceAsStream("/CreateSimpleDB.sql")
         DriverManager.getConnection(JDBC_URL, "sa", "").use { connection ->
@@ -45,7 +46,7 @@ internal class Example05Test {
         config.typeHandlerRegistry.register(YesNoTypeHandler::class.java)
         config.addMapper(PersonMapper::class.java)
         config.addMapper(CommonSelectMapper::class.java)
-        return SqlSessionFactoryBuilder().build(config).openSession()
+        return SqlSessionFactoryBuilder().build(config).openSession(executorType)
     }
 
     @Test
@@ -201,6 +202,22 @@ internal class Example05Test {
                 PersonRecord(11, "Sam", "Smith", Date(), true, "Architect", 23)
             )
             assertThat(rows).isEqualTo(2)
+        }
+    }
+
+    @Test
+    fun testInsertBatch() {
+        openSession(ExecutorType.BATCH).use { session ->
+            val mapper = session.getMapper(PersonMapper::class.java)
+
+            mapper.insertBatch(
+                PersonRecord(10, "Joe", "Jones", Date(), true, "Developer", 22),
+                PersonRecord(11, "Sam", "Smith", Date(), true, "Architect", 23)
+            )
+
+            val batchResults = mapper.flush()
+            assertThat(batchResults).hasSize(1)
+            assertThat(batchResults.flatMap { it.updateCounts.asList() }.sum()).isEqualTo(2)
         }
     }
 
