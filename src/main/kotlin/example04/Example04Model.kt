@@ -1,6 +1,6 @@
 package example04
 
-import java.util.*
+import java.time.LocalDate
 
 /*
  * In this version of the model, we have an AddressWithPeople class that includes a nested list of the Persons with the
@@ -20,7 +20,7 @@ class Person {
     var id: Int = 0
     lateinit var firstName: String
     lateinit var lastName: String
-    lateinit var birthDate: Date
+    lateinit var birthDate: LocalDate
     var employed: Boolean = false
     var occupation: String? = null
 }

@@ -13,8 +13,6 @@ import org.junit.jupiter.api.Test
 import java.io.InputStreamReader
 import java.sql.DriverManager
 import java.time.LocalDate
-import java.time.ZoneId
-import java.util.*
 
 class Example03Test {
     private lateinit var sqlSessionFactory: SqlSessionFactory
@@ -26,7 +24,7 @@ class Example03Test {
         DriverManager.getConnection(JDBC_URL, "sa", "").use { connection ->
             val sr = ScriptRunner(connection)
             sr.setLogWriter(null)
-            sr.runScript(InputStreamReader(script))
+            sr.runScript(InputStreamReader(script!!))
         }
 
         val ds = UnpooledDataSource(JDBC_DRIVER, JDBC_URL, "sa", "")
@@ -46,8 +44,8 @@ class Example03Test {
             assertThat(person.id).isEqualTo(1)
             assertThat(person.firstName).isEqualTo("Fred")
             assertThat(person.lastName).isEqualTo("Flintstone")
-            assertThat(person.birthDate).isEqualTo(Date.from(LocalDate.of(1935, 2, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()))
-            assertThat(person.employed).isTrue()
+            assertThat(person.birthDate).isEqualTo(LocalDate.of(1935, 2, 1))
+            assertThat(person.employed).isTrue
             assertThat(person.occupation).isEqualTo("Brontosaurus Operator")
             assertThat(person.address.id).isEqualTo(1)
             assertThat(person.address.streetAddress).isEqualTo("123 Main Street")
@@ -66,8 +64,8 @@ class Example03Test {
             assertThat(person.id).isEqualTo(3)
             assertThat(person.firstName).isEqualTo("Pebbles")
             assertThat(person.lastName).isEqualTo("Flintstone")
-            assertThat(person.birthDate).isEqualTo(Date.from(LocalDate.of(1960, 5, 6).atStartOfDay(ZoneId.systemDefault()).toInstant()))
-            assertThat(person.employed).isFalse()
+            assertThat(person.birthDate).isEqualTo(LocalDate.of(1960, 5, 6))
+            assertThat(person.employed).isFalse
             assertThat(person.occupation).isNull()
             assertThat(person.address.id).isEqualTo(1)
             assertThat(person.address.streetAddress).isEqualTo("123 Main Street")
@@ -86,8 +84,8 @@ class Example03Test {
             assertThat(person.id).isEqualTo(3)
             assertThat(person.firstName).isEqualTo("Pebbles")
             assertThat(person.lastName).isEqualTo("Flintstone")
-            assertThat(person.birthDate).isEqualTo(Date.from(LocalDate.of(1960, 5, 6).atStartOfDay(ZoneId.systemDefault()).toInstant()))
-            assertThat(person.employed).isFalse()
+            assertThat(person.birthDate).isEqualTo(LocalDate.of(1960, 5, 6))
+            assertThat(person.employed).isFalse
             assertThat(person.occupation ?: "<null>").isEqualTo("<null>")
             assertThat(person.address.id).isEqualTo(1)
             assertThat(person.address.streetAddress).isEqualTo("123 Main Street")

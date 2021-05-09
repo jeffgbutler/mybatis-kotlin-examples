@@ -27,7 +27,7 @@ import org.mybatis.dynamic.sql.util.mybatis3.CommonSelectMapper
 import util.YesNoTypeHandler
 import java.io.InputStreamReader
 import java.sql.DriverManager
-import java.util.*
+import java.time.LocalDate
 
 internal class Example05Test {
 
@@ -185,7 +185,7 @@ internal class Example05Test {
     fun testInsert() {
         openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val record = PersonRecord(10, "Joe", "Jones", Date(), true, "Developer", 22)
+            val record = PersonRecord(10, "Joe", "Jones", LocalDate.now(), true, "Developer", 22)
 
             val rows = mapper.insert(record)
             assertThat(rows).isEqualTo(1)
@@ -198,8 +198,8 @@ internal class Example05Test {
             val mapper = session.getMapper(PersonMapper::class.java)
 
             val rows = mapper.insertMultiple(
-                PersonRecord(10, "Joe", "Jones", Date(), true, "Developer", 22),
-                PersonRecord(11, "Sam", "Smith", Date(), true, "Architect", 23)
+                PersonRecord(10, "Joe", "Jones", LocalDate.now(), true, "Developer", 22),
+                PersonRecord(11, "Sam", "Smith", LocalDate.now(), true, "Architect", 23)
             )
             assertThat(rows).isEqualTo(2)
         }
@@ -211,8 +211,8 @@ internal class Example05Test {
             val mapper = session.getMapper(PersonMapper::class.java)
 
             mapper.insertBatch(
-                PersonRecord(10, "Joe", "Jones", Date(), true, "Developer", 22),
-                PersonRecord(11, "Sam", "Smith", Date(), true, "Architect", 23)
+                PersonRecord(10, "Joe", "Jones", LocalDate.now(), true, "Developer", 22),
+                PersonRecord(11, "Sam", "Smith", LocalDate.now(), true, "Architect", 23)
             )
 
             val batchResults = mapper.flush()
@@ -225,7 +225,7 @@ internal class Example05Test {
     fun testInsertWithNull() {
         openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val record = PersonRecord(100, "Joe", "Jones", Date(), false, null, 22)
+            val record = PersonRecord(100, "Joe", "Jones", LocalDate.now(), false, null, 22)
 
             val rows = mapper.insert(record)
             assertThat(rows).isEqualTo(1)
@@ -236,7 +236,7 @@ internal class Example05Test {
     fun testUpdateByPrimaryKey() {
         openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val record = PersonRecord(100, "Joe", "Jones", Date(), true, "Developer", 22)
+            val record = PersonRecord(100, "Joe", "Jones", LocalDate.now(), true, "Developer", 22)
 
             var rows = mapper.insert(record)
             assertThat(rows).isEqualTo(1)
@@ -254,7 +254,7 @@ internal class Example05Test {
     fun testUpdateByPrimaryKeySelective() {
         openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val record = PersonRecord(100, "Joe", "Jones", Date(), true, "Developer", 22)
+            val record = PersonRecord(100, "Joe", "Jones", LocalDate.now(), true, "Developer", 22)
 
             var rows = mapper.insert(record)
             assertThat(rows).isEqualTo(1)
@@ -274,7 +274,7 @@ internal class Example05Test {
     fun testUpdateByPrimaryKeySelectiveWithCopy() {
         openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val record = PersonRecord(100, "Joe", "Jones", Date(), true, "Developer", 22)
+            val record = PersonRecord(100, "Joe", "Jones", LocalDate.now(), true, "Developer", 22)
 
             var rows = mapper.insert(record)
             assertThat(rows).isEqualTo(1)
@@ -293,7 +293,7 @@ internal class Example05Test {
     fun testUpdateWithNulls() {
         openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val record = PersonRecord(100, "Joe", "Jones", Date(), true, "Developer", 22)
+            val record = PersonRecord(100, "Joe", "Jones", LocalDate.now(), true, "Developer", 22)
 
             var rows = mapper.insert(record)
             assertThat(rows).isEqualTo(1)
@@ -317,7 +317,7 @@ internal class Example05Test {
     fun testUpdate() {
         openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val record = PersonRecord(100, "Joe", "Jones", Date(), true, "Developer", 22)
+            val record = PersonRecord(100, "Joe", "Jones", LocalDate.now(), true, "Developer", 22)
 
             var rows = mapper.insert(record)
             assertThat(rows).isEqualTo(1)
@@ -340,7 +340,7 @@ internal class Example05Test {
     fun testUpdateAllRows() {
         openSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val record = PersonRecord(100, "Joe", "Jones", Date(), true, "Developer", 22)
+            val record = PersonRecord(100, "Joe", "Jones", LocalDate.now(), true, "Developer", 22)
 
             var rows = mapper.insert(record)
             assertThat(rows).isEqualTo(1)

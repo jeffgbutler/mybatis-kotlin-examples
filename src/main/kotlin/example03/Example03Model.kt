@@ -1,6 +1,6 @@
 package example03
 
-import java.util.*
+import java.time.LocalDate
 
 /*
  * In this version of the model, we have added an Address class and then made address an attribute of a person.
@@ -31,7 +31,7 @@ class PersonWithAddress {
     var id: Int = 0
     lateinit var firstName: String
     lateinit var lastName: String
-    lateinit var birthDate: Date
+    lateinit var birthDate: LocalDate
     var employed: Boolean = false
     var occupation: String? = null
     var address = Address()

@@ -3,7 +3,7 @@ package example05
 import org.mybatis.dynamic.sql.SqlTable
 import org.mybatis.dynamic.sql.util.kotlin.elements.column
 import java.sql.JDBCType
-import java.util.*
+import java.time.LocalDate
 
 object PersonDynamicSqlSupport {
     val person = Person()
@@ -20,7 +20,7 @@ object PersonDynamicSqlSupport {
         val id = column<Int>(name = "id", jdbcType = JDBCType.INTEGER)
         val firstName = column<String>(name = "first_name", jdbcType = JDBCType.VARCHAR)
         val lastName = column<String>(name = "last_name", jdbcType = JDBCType.VARCHAR)
-        val birthDate = column<Date>(name = "birth_date", jdbcType = JDBCType.DATE)
+        val birthDate = column<LocalDate>(name = "birth_date", jdbcType = JDBCType.DATE)
         val employed = column<Boolean>(
             name = "employed",
             jdbcType = JDBCType.VARCHAR,
