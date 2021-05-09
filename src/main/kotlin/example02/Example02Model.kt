@@ -1,25 +1,25 @@
 package example02
 
-import org.apache.ibatis.annotations.AutomapConstructor
-import java.util.*
+import java.time.LocalDate
 
 /*
- * In this version of the class, two things have changed:
+ * In this version of the class, one thing has changed:
  *
- * 1. The data type for birthDate has changed to java.util.Date
- * 2. The data type for employed has changed to Boolean
+ * 1. The data type for employed has changed to Boolean
  *
- * MyBatis has a built in type handler for java.sql.Date -> java.util.Date so we don't need to write one.  But we do need to write
- * a type handler to convert the database string to a Boolean.  That type handler is util.YesNoTypeHandler.
+ * MyBatis has a built in type handler for java.sql.Date -> java.time.LocalDate so we don't need to write one.  But we do
+ * need to write a type handler to convert the database string to a Boolean.  That type handler is
+ * util.YesNoTypeHandler.
  *
- * We also need to use the @AutomapConstructor annotation to enable advanced auto mapping in MyBatis
+ * Note that MyBatis version prior to 3.5.0 will have difficulty finding the constructor for a class like this that
+ * requires type handlers. For that case, see the example on example02.oldmybatis for a workaround.
  *
  */
-data class Person @AutomapConstructor constructor(
+data class Person(
     val id: Int,
     val firstName: String,
     val lastName: String,
-    val birthDate: Date,
+    val birthDate: LocalDate,
     val employed: Boolean,
     val occupation: String?
 )

@@ -27,21 +27,28 @@ immutable after creation.
 
 This example shows that MyBatis is able to create simple objects (basic data types, no nested classes) with idiomatic
 Kotlin. The "model" classes are Kotlin data classes with a mix of nullable and non-nullable types.  No special mapping
-is need in MyBatis. MyBatis can auto discover class constructors in this case. The important distinction is:
-
-1. Only simple data types are used
-2. There are no nested classes or group by functions 
+is need in MyBatis. MyBatis can auto discover class constructors in this case. The important distinction is there are
+no nested classes or group by functions 
 
 ### example02 - Type Handlers and Advanced Auto Mapping
 
 This example shows the use of TypeHandlers. With this example we have moved beyond simple types.
 We are still using immutable types, but in this case we have a non standard type that requires a
-TypeHandler. In addition to creating the TypeHandler itself, we need to annotate the class constructor
-with the `@AutomapConstructor` annotation and also register the type handler.  Important code changes:
+TypeHandler. Important code changes:
   
-1. Look in `/src/main/kotlin/example02/Example02Model.kt` to see how to annotate the class
-2. Look in `/src/main/kotlin/util/YesNoTypeHandler.kt` to see how to write the type handler
-3. Look in `/src/test/kotlin/example02/Example02Test.kt` to see how to register the type handler
+1. Look in `/src/main/kotlin/util/YesNoTypeHandler.kt` to see how to write the type handler
+1. Look in `/src/test/kotlin/example02/Example02Test.kt` to see how to register the type handler
+
+### example02.oldmybatis - Type Handlers and Advanced Auto Mapping
+
+This example shows the use of classes that need TypeHandlers in older versions of MyBatis. In MyBatis version prior to
+3.5.0, MyBatis sometimes had difficulty finding constructors on classes that included types with TypeHandlers.
+In that case, we need to annotate the class constructor
+with the `@AutomapConstructor` annotation and also register the type handler.  Important code changes:
+
+1. Look in `/src/main/kotlin/example02/oldmybatis/Example02Model.kt` to see how to annotate the class
+1. Look in `/src/main/kotlin/util/YesNoTypeHandler.kt` to see how to write the type handler
+1. Look in `/src/test/kotlin/example02/oldmybatis/Example02Test.kt` to see how to register the type handler
 
 ### example03 - Nested Objects
 

@@ -1,4 +1,4 @@
-package example01
+package example02.oldmybatis
 
 import org.assertj.core.api.Assertions.*
 import org.apache.ibatis.datasource.unpooled.UnpooledDataSource
@@ -10,12 +10,14 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import util.YesNoTypeHandler
 import java.io.InputStreamReader
-import java.util.Date
 import java.sql.DriverManager
 import java.time.LocalDate
+import java.time.ZoneId
+import java.util.*
 
-class Example01Test {
+class Example02OldMyBatisTest {
     private lateinit var sqlSessionFactory: SqlSessionFactory
 
     @BeforeEach
@@ -31,22 +33,24 @@ class Example01Test {
         val ds = UnpooledDataSource(JDBC_DRIVER, JDBC_URL, "sa", "")
         val environment = Environment("test", JdbcTransactionFactory(), ds)
         val config = Configuration(environment)
-        config.addMapper(Example01Mapper::class.java)
+        // register the type handler...
+        config.typeHandlerRegistry.register(YesNoTypeHandler::class.java)
+        config.addMapper(Example02OldMyBatisMapper::class.java)
         sqlSessionFactory = SqlSessionFactoryBuilder().build(config)
     }
 
     @Test
     fun selectPersonWithAllFields() {
         sqlSessionFactory.openSession().use { session ->
-            val mapper = session.getMapper(Example01Mapper::class.java)
+            val mapper = session.getMapper(Example02OldMyBatisMapper::class.java)
 
             val person = mapper.selectPersonById(1)
 
             assertThat(person.id).isEqualTo(1)
             assertThat(person.firstName).isEqualTo("Fred")
             assertThat(person.lastName).isEqualTo("Flintstone")
-            assertThat(person.birthDate).isEqualTo(LocalDate.of(1935, 2, 1))
-            assertThat(person.employed).isEqualToIgnoringCase("Yes")
+            assertThat(person.birthDate).isEqualTo(Date.from(LocalDate.of(1935, 2, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()))
+            assertThat(person.employed).isTrue()
             assertThat(person.occupation).isEqualTo("Brontosaurus Operator")
         }
     }
@@ -54,15 +58,15 @@ class Example01Test {
     @Test
     fun selectPersonWithNullOccupation() {
         sqlSessionFactory.openSession().use { session ->
-            val mapper = session.getMapper(Example01Mapper::class.java)
+            val mapper = session.getMapper(Example02OldMyBatisMapper::class.java)
 
             val person = mapper.selectPersonById(3)
 
             assertThat(person.id).isEqualTo(3)
             assertThat(person.firstName).isEqualTo("Pebbles")
             assertThat(person.lastName).isEqualTo("Flintstone")
-            assertThat(person.birthDate).isEqualTo(LocalDate.of(1960, 5, 6))
-            assertThat(person.employed).isEqualToIgnoringCase("No")
+            assertThat(person.birthDate).isEqualTo(Date.from(LocalDate.of(1960, 5, 6).atStartOfDay(ZoneId.systemDefault()).toInstant()))
+            assertThat(person.employed).isFalse()
             assertThat(person.occupation).isNull()
         }
     }
@@ -70,15 +74,15 @@ class Example01Test {
     @Test
     fun selectPersonWithNullOccupationAndElvisOperator() {
         sqlSessionFactory.openSession().use { session ->
-            val mapper = session.getMapper(Example01Mapper::class.java)
+            val mapper = session.getMapper(Example02OldMyBatisMapper::class.java)
 
             val person = mapper.selectPersonById(3)
 
             assertThat(person.id).isEqualTo(3)
             assertThat(person.firstName).isEqualTo("Pebbles")
             assertThat(person.lastName).isEqualTo("Flintstone")
-            assertThat(person.birthDate).isEqualTo(LocalDate.of(1960, 5, 6))
-            assertThat(person.employed).isEqualToIgnoringCase("No")
+            assertThat(person.birthDate).isEqualTo(Date.from(LocalDate.of(1960, 5, 6).atStartOfDay(ZoneId.systemDefault()).toInstant()))
+            assertThat(person.employed).isFalse()
             assertThat(person.occupation ?: "<null>").isEqualTo("<null>")
         }
     }
