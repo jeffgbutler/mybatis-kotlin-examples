@@ -5,21 +5,16 @@ import org.apache.ibatis.datasource.unpooled.UnpooledDataSource
 import org.apache.ibatis.jdbc.ScriptRunner
 import org.apache.ibatis.mapping.Environment
 import org.apache.ibatis.session.Configuration
-import org.apache.ibatis.session.SqlSessionFactory
+import org.apache.ibatis.session.SqlSession
 import org.apache.ibatis.session.SqlSessionFactoryBuilder
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.InputStreamReader
-import java.util.Date
 import java.sql.DriverManager
 import java.time.LocalDate
 
 class Example01Test {
-    private lateinit var sqlSessionFactory: SqlSessionFactory
-
-    @BeforeEach
-    fun setup() {
+    private fun newSession(): SqlSession {
         Class.forName(JDBC_DRIVER)
         val script = javaClass.getResourceAsStream("/CreateSimpleDB.sql")
         DriverManager.getConnection(JDBC_URL, "sa", "").use { connection ->
@@ -32,12 +27,12 @@ class Example01Test {
         val environment = Environment("test", JdbcTransactionFactory(), ds)
         val config = Configuration(environment)
         config.addMapper(Example01Mapper::class.java)
-        sqlSessionFactory = SqlSessionFactoryBuilder().build(config)
+        return SqlSessionFactoryBuilder().build(config).openSession()
     }
 
     @Test
     fun selectPersonWithAllFields() {
-        sqlSessionFactory.openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(Example01Mapper::class.java)
 
             val person = mapper.selectPersonById(1)
@@ -53,7 +48,7 @@ class Example01Test {
 
     @Test
     fun selectPersonWithNullOccupation() {
-        sqlSessionFactory.openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(Example01Mapper::class.java)
 
             val person = mapper.selectPersonById(3)
@@ -69,7 +64,7 @@ class Example01Test {
 
     @Test
     fun selectPersonWithNullOccupationAndElvisOperator() {
-        sqlSessionFactory.openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(Example01Mapper::class.java)
 
             val person = mapper.selectPersonById(3)

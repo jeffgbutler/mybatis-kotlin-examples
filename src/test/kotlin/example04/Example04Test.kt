@@ -5,20 +5,16 @@ import org.apache.ibatis.datasource.unpooled.UnpooledDataSource
 import org.apache.ibatis.jdbc.ScriptRunner
 import org.apache.ibatis.mapping.Environment
 import org.apache.ibatis.session.Configuration
-import org.apache.ibatis.session.SqlSessionFactory
+import org.apache.ibatis.session.SqlSession
 import org.apache.ibatis.session.SqlSessionFactoryBuilder
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.InputStreamReader
 import java.sql.DriverManager
 import java.time.LocalDate
 
 class Example04Test {
-    private lateinit var sqlSessionFactory: SqlSessionFactory
-
-    @BeforeEach
-    fun setup() {
+    private fun newSession(): SqlSession {
         Class.forName(JDBC_DRIVER)
         val script = javaClass.getResourceAsStream("/CreateSimpleDB.sql")
         DriverManager.getConnection(JDBC_URL, "sa", "").use { connection ->
@@ -31,12 +27,12 @@ class Example04Test {
         val environment = Environment("test", JdbcTransactionFactory(), ds)
         val config = Configuration(environment)
         config.addMapper(Example04Mapper::class.java)
-        sqlSessionFactory = SqlSessionFactoryBuilder().build(config)
+        return SqlSessionFactoryBuilder().build(config).openSession()
     }
 
     @Test
     fun selectAddressById() {
-        sqlSessionFactory.openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(Example04Mapper::class.java)
 
             val address = mapper.selectAddressById(1)
@@ -51,19 +47,19 @@ class Example04Test {
             assertThat(address.people[0].firstName).isEqualTo("Fred")
             assertThat(address.people[0].lastName).isEqualTo("Flintstone")
             assertThat(address.people[0].birthDate).isEqualTo(LocalDate.of(1935, 2, 1))
-            assertThat(address.people[0].employed).isTrue()
+            assertThat(address.people[0].employed).isTrue
             assertThat(address.people[0].occupation).isEqualTo("Brontosaurus Operator")
 
             assertThat(address.people[1].firstName).isEqualTo("Wilma")
             assertThat(address.people[1].lastName).isEqualTo("Flintstone")
             assertThat(address.people[1].birthDate).isEqualTo(LocalDate.of(1940, 2, 1))
-            assertThat(address.people[1].employed).isTrue()
+            assertThat(address.people[1].employed).isTrue
             assertThat(address.people[1].occupation).isEqualTo("Accountant")
 
             assertThat(address.people[2].firstName).isEqualTo("Pebbles")
             assertThat(address.people[2].lastName).isEqualTo("Flintstone")
             assertThat(address.people[2].birthDate).isEqualTo(LocalDate.of(1960, 5, 6))
-            assertThat(address.people[2].employed).isFalse()
+            assertThat(address.people[2].employed).isFalse
             assertThat(address.people[2].occupation).isNull()
         }
     }

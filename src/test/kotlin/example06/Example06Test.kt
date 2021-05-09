@@ -24,7 +24,7 @@ import java.sql.DriverManager
 
 internal class Example06Test {
 
-    private fun openSession(executorType: ExecutorType = ExecutorType.REUSE): SqlSession {
+    private fun newSession(executorType: ExecutorType = ExecutorType.REUSE): SqlSession {
         Class.forName(JDBC_DRIVER)
         val script = javaClass.getResourceAsStream("/CreateSimpleDB.sql")
         DriverManager.getConnection(JDBC_URL, "sa", "").use { connection ->
@@ -43,7 +43,7 @@ internal class Example06Test {
 
     @Test
     fun testSelect() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
 
             val rows = mapper.select {
@@ -61,7 +61,7 @@ internal class Example06Test {
 
     @Test
     fun testSelectAllRows() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
 
             val rows = mapper.select { allRows() }
@@ -72,7 +72,7 @@ internal class Example06Test {
 
     @Test
     fun testSelectAllRowsWithOrder() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
 
             val rows = mapper.select {
@@ -87,7 +87,7 @@ internal class Example06Test {
 
     @Test
     fun testSelectByPrimaryKeyNoRecord() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
 
             val row = mapper.selectByPrimaryKey(106)
@@ -98,7 +98,7 @@ internal class Example06Test {
 
     @Test
     fun testSelectDistinct() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
 
             val rows = mapper.selectDistinct {
@@ -111,7 +111,7 @@ internal class Example06Test {
 
     @Test
     fun testFirstNameIn() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
 
             val rows = mapper.select {
@@ -127,7 +127,7 @@ internal class Example06Test {
 
     @Test
     fun testDelete() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
             val rows = mapper.delete {
                 where(lastName, isEqualTo("Rubble"))
@@ -138,7 +138,7 @@ internal class Example06Test {
 
     @Test
     fun testDeleteAllRows() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
             val rows = mapper.delete { allRows() }
             assertThat(rows).isEqualTo(4)
@@ -147,7 +147,7 @@ internal class Example06Test {
 
     @Test
     fun testDeleteByPrimaryKey() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
             val rows = mapper.deleteByPrimaryKey(22)
 
@@ -157,7 +157,7 @@ internal class Example06Test {
 
     @Test
     fun testInsert() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
             val row = GeneratedAlwaysRow(firstName = "Joe", lastName = "Jones")
 
@@ -170,7 +170,7 @@ internal class Example06Test {
 
     @Test
     fun testInsertBatch() {
-        openSession(ExecutorType.BATCH).use { session ->
+        newSession(ExecutorType.BATCH).use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
 
             val row1 = GeneratedAlwaysRow(firstName = "Joe", lastName = "Jones")
@@ -190,7 +190,7 @@ internal class Example06Test {
 
     @Test
     fun testInsertMultiple() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
 
             val row1 = GeneratedAlwaysRow(firstName = "Joe", lastName = "Jones")
@@ -207,7 +207,7 @@ internal class Example06Test {
 
     @Test
     fun testInsertGeneral() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
 
             val insertStatement = insertInto(generatedAlways) {
@@ -224,7 +224,7 @@ internal class Example06Test {
 
     @Test
     fun testUpdateByPrimaryKey() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
             val row = GeneratedAlwaysRow(firstName = "Joe", lastName = "Jones")
 
@@ -242,7 +242,7 @@ internal class Example06Test {
 
     @Test
     fun testUpdateByPrimaryKeySelective() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
             val row = GeneratedAlwaysRow(firstName = "Joe", lastName = "Jones")
 
@@ -260,7 +260,7 @@ internal class Example06Test {
 
     @Test
     fun testUpdateByPrimaryKeySelectiveWithCopy() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
             val row = GeneratedAlwaysRow(firstName = "Joe", lastName = "Jones")
 
@@ -278,7 +278,7 @@ internal class Example06Test {
 
     @Test
     fun testUpdate() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
             val row = GeneratedAlwaysRow(firstName = "Joe", lastName = "Jones")
 
@@ -301,7 +301,7 @@ internal class Example06Test {
 
     @Test
     fun testUpdateAllRows() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
 
             val updateRecord = GeneratedAlwaysRow(lastName = "Blackwell")
@@ -319,7 +319,7 @@ internal class Example06Test {
 
     @Test
     fun testCount() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
             val rows = mapper.count {
                 where(lastName, isEqualTo("Rubble"))
@@ -331,7 +331,7 @@ internal class Example06Test {
 
     @Test
     fun testCountAll() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
             val rows = mapper.count { allRows() }
 

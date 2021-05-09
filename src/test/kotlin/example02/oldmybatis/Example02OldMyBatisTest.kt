@@ -5,10 +5,9 @@ import org.apache.ibatis.datasource.unpooled.UnpooledDataSource
 import org.apache.ibatis.jdbc.ScriptRunner
 import org.apache.ibatis.mapping.Environment
 import org.apache.ibatis.session.Configuration
-import org.apache.ibatis.session.SqlSessionFactory
+import org.apache.ibatis.session.SqlSession
 import org.apache.ibatis.session.SqlSessionFactoryBuilder
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import util.YesNoTypeHandler
 import java.io.InputStreamReader
@@ -18,10 +17,7 @@ import java.time.ZoneId
 import java.util.*
 
 class Example02OldMyBatisTest {
-    private lateinit var sqlSessionFactory: SqlSessionFactory
-
-    @BeforeEach
-    fun setup() {
+    private fun newSession(): SqlSession {
         Class.forName(JDBC_DRIVER)
         val script = javaClass.getResourceAsStream("/CreateSimpleDB.sql")
         DriverManager.getConnection(JDBC_URL, "sa", "").use { connection ->
@@ -36,12 +32,12 @@ class Example02OldMyBatisTest {
         // register the type handler...
         config.typeHandlerRegistry.register(YesNoTypeHandler::class.java)
         config.addMapper(Example02OldMyBatisMapper::class.java)
-        sqlSessionFactory = SqlSessionFactoryBuilder().build(config)
+        return SqlSessionFactoryBuilder().build(config).openSession()
     }
 
     @Test
     fun selectPersonWithAllFields() {
-        sqlSessionFactory.openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(Example02OldMyBatisMapper::class.java)
 
             val person = mapper.selectPersonById(1)
@@ -50,14 +46,14 @@ class Example02OldMyBatisTest {
             assertThat(person.firstName).isEqualTo("Fred")
             assertThat(person.lastName).isEqualTo("Flintstone")
             assertThat(person.birthDate).isEqualTo(Date.from(LocalDate.of(1935, 2, 1).atStartOfDay(ZoneId.systemDefault()).toInstant()))
-            assertThat(person.employed).isTrue()
+            assertThat(person.employed).isTrue
             assertThat(person.occupation).isEqualTo("Brontosaurus Operator")
         }
     }
 
     @Test
     fun selectPersonWithNullOccupation() {
-        sqlSessionFactory.openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(Example02OldMyBatisMapper::class.java)
 
             val person = mapper.selectPersonById(3)
@@ -66,14 +62,14 @@ class Example02OldMyBatisTest {
             assertThat(person.firstName).isEqualTo("Pebbles")
             assertThat(person.lastName).isEqualTo("Flintstone")
             assertThat(person.birthDate).isEqualTo(Date.from(LocalDate.of(1960, 5, 6).atStartOfDay(ZoneId.systemDefault()).toInstant()))
-            assertThat(person.employed).isFalse()
+            assertThat(person.employed).isFalse
             assertThat(person.occupation).isNull()
         }
     }
 
     @Test
     fun selectPersonWithNullOccupationAndElvisOperator() {
-        sqlSessionFactory.openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(Example02OldMyBatisMapper::class.java)
 
             val person = mapper.selectPersonById(3)
@@ -82,7 +78,7 @@ class Example02OldMyBatisTest {
             assertThat(person.firstName).isEqualTo("Pebbles")
             assertThat(person.lastName).isEqualTo("Flintstone")
             assertThat(person.birthDate).isEqualTo(Date.from(LocalDate.of(1960, 5, 6).atStartOfDay(ZoneId.systemDefault()).toInstant()))
-            assertThat(person.employed).isFalse()
+            assertThat(person.employed).isFalse
             assertThat(person.occupation ?: "<null>").isEqualTo("<null>")
         }
     }

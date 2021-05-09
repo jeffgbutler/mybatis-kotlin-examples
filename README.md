@@ -33,7 +33,7 @@ no nested classes or group by functions
 ### example02 - Type Handlers and Advanced Auto Mapping
 
 This example shows the use of TypeHandlers. With this example we have moved beyond simple types.
-We are still using immutable types, but in this case we have a non standard type that requires a
+We are still using immutable types, but in this case we have a non-standard type that requires a
 TypeHandler. Important code changes:
   
 1. Look in `/src/main/kotlin/util/YesNoTypeHandler.kt` to see how to write the type handler
@@ -52,7 +52,7 @@ with the `@AutomapConstructor` annotation and also register the type handler.  I
 
 ### example03 - Nested Objects
 
-This example shows how to write Kotlin code for a class hierarchy where a class (Person in this case) has an
+This example shows how to write Kotlin for a class hierarchy where a class (Person in this case) has an
 attribute that is another class (Address in this case).  With this example we can no longer use Kotlin
 data classes because of the way that MyBatis constructs an object graph in cases like this. 
 

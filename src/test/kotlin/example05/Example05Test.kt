@@ -31,7 +31,7 @@ import java.time.LocalDate
 
 internal class Example05Test {
 
-    private fun openSession(executorType: ExecutorType = ExecutorType.REUSE): SqlSession {
+    private fun newSession(executorType: ExecutorType = ExecutorType.REUSE): SqlSession {
         Class.forName(JDBC_DRIVER)
         val script = javaClass.getResourceAsStream("/CreateSimpleDB.sql")
         DriverManager.getConnection(JDBC_URL, "sa", "").use { connection ->
@@ -51,7 +51,7 @@ internal class Example05Test {
 
     @Test
     fun testSelect() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
             val rows = mapper.select {
@@ -74,7 +74,7 @@ internal class Example05Test {
 
     @Test
     fun testSelectAllRows() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
             val rows = mapper.select { allRows() }
@@ -85,7 +85,7 @@ internal class Example05Test {
 
     @Test
     fun testSelectAllRowsWithOrder() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
             val rows = mapper.select {
@@ -100,7 +100,7 @@ internal class Example05Test {
 
     @Test
     fun testSelectByPrimaryKeyNoRecord() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
             val row = mapper.selectByPrimaryKey(22)
@@ -112,7 +112,7 @@ internal class Example05Test {
 
     @Test
     fun testSelectDistinct() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
             val rows = mapper.selectDistinct {
@@ -126,7 +126,7 @@ internal class Example05Test {
 
     @Test
     fun testSelectWithTypeHandler() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
             val rows = mapper.select {
@@ -142,7 +142,7 @@ internal class Example05Test {
 
     @Test
     fun testFirstNameIn() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
             val rows = mapper.select { where(firstName, isIn("Fred", "Barney")) }
@@ -155,7 +155,7 @@ internal class Example05Test {
 
     @Test
     fun testDelete() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
             val rows = mapper.delete { where(occupation, isNull()) }
             assertThat(rows).isEqualTo(2)
@@ -164,7 +164,7 @@ internal class Example05Test {
 
     @Test
     fun testDeleteAllRows() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
             val rows = mapper.delete { allRows() }
             assertThat(rows).isEqualTo(6)
@@ -173,7 +173,7 @@ internal class Example05Test {
 
     @Test
     fun testDeleteByPrimaryKey() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
             val rows = mapper.deleteByPrimaryKey(2)
 
@@ -183,7 +183,7 @@ internal class Example05Test {
 
     @Test
     fun testInsert() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
             val record = PersonRecord(10, "Joe", "Jones", LocalDate.now(), true, "Developer", 22)
 
@@ -194,7 +194,7 @@ internal class Example05Test {
 
     @Test
     fun testInsertMultiple() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
             val rows = mapper.insertMultiple(
@@ -207,7 +207,7 @@ internal class Example05Test {
 
     @Test
     fun testInsertBatch() {
-        openSession(ExecutorType.BATCH).use { session ->
+        newSession(ExecutorType.BATCH).use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
             mapper.insertBatch(
@@ -223,7 +223,7 @@ internal class Example05Test {
 
     @Test
     fun testInsertWithNull() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
             val record = PersonRecord(100, "Joe", "Jones", LocalDate.now(), false, null, 22)
 
@@ -234,7 +234,7 @@ internal class Example05Test {
 
     @Test
     fun testUpdateByPrimaryKey() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
             val record = PersonRecord(100, "Joe", "Jones", LocalDate.now(), true, "Developer", 22)
 
@@ -252,7 +252,7 @@ internal class Example05Test {
 
     @Test
     fun testUpdateByPrimaryKeySelective() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
             val record = PersonRecord(100, "Joe", "Jones", LocalDate.now(), true, "Developer", 22)
 
@@ -272,7 +272,7 @@ internal class Example05Test {
 
     @Test
     fun testUpdateByPrimaryKeySelectiveWithCopy() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
             val record = PersonRecord(100, "Joe", "Jones", LocalDate.now(), true, "Developer", 22)
 
@@ -291,7 +291,7 @@ internal class Example05Test {
 
     @Test
     fun testUpdateWithNulls() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
             val record = PersonRecord(100, "Joe", "Jones", LocalDate.now(), true, "Developer", 22)
 
@@ -315,7 +315,7 @@ internal class Example05Test {
 
     @Test
     fun testUpdate() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
             val record = PersonRecord(100, "Joe", "Jones", LocalDate.now(), true, "Developer", 22)
 
@@ -338,7 +338,7 @@ internal class Example05Test {
 
     @Test
     fun testUpdateAllRows() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
             val record = PersonRecord(100, "Joe", "Jones", LocalDate.now(), true, "Developer", 22)
 
@@ -360,7 +360,7 @@ internal class Example05Test {
 
     @Test
     fun testCount() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
             val rows = mapper.count { where(occupation, isNull()) }
 
@@ -370,7 +370,7 @@ internal class Example05Test {
 
     @Test
     fun testCountAll() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
             val rows = mapper.count { allRows() }
 
@@ -380,7 +380,7 @@ internal class Example05Test {
 
     @Test
     fun testSelfJoin() {
-        openSession().use { session ->
+        newSession().use { session ->
             val mapper = session.getMapper(CommonSelectMapper::class.java)
 
             val person2 = PersonDynamicSqlSupport.Person()
