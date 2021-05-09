@@ -17,7 +17,8 @@ import java.time.LocalDate
  * 2. Nullable fields (occupation in this case) cannot have lateinit - so we set them to null by default
  * 3. Nested classes (the address attribute of PersonWithAddress) should be initialized in their enclosing classes.
  *    Kotlin would allow lateinit for nested classes, but that won't work with MyBatis because MyBatis will do a "get"
- *    on the nested class, and "get" is not allowed until the class has been initialized
+ *    on the nested class, and "get" is not allowed until the class has been initialized. If the nested class is
+ *    nullable, it will work to initialize the property as "null" - MyBatis can create an instance in that case.
  */
 
 class Address {
@@ -34,6 +35,6 @@ class PersonWithAddress {
     lateinit var birthDate: LocalDate
     var employed: Boolean = false
     var occupation: String? = null
-    var address = Address()
+    var address: Address = Address()
 }
 
