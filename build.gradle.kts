@@ -8,6 +8,17 @@ group = "com.github.jeffgbutler"
 version = "1.0.0-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
+sourceSets {
+    main {
+        java {
+            srcDirs("src/main/kotlin")
+        }
+        resources {
+            srcDirs("src/main/kotlin")
+        }
+    }
+}
+
 repositories {
     mavenCentral()
     maven {
