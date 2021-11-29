@@ -33,7 +33,7 @@ dependencies {
     testImplementation ("org.assertj:assertj-core:3.21.0")
     testImplementation ("org.junit.jupiter:junit-jupiter-api:5.8.1")
     testImplementation ("org.junit.jupiter:junit-jupiter-engine:5.8.1")
-    testImplementation ("org.hsqldb:hsqldb:2.6.0")
+    testImplementation ("org.hsqldb:hsqldb:2.6.1")
 }
 
 tasks.withType<Test> {
