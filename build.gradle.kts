@@ -29,7 +29,7 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation ("org.mybatis:mybatis:3.5.8")
-    implementation ("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.3.0")
+    implementation ("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.3.1")
     testImplementation ("org.assertj:assertj-core:3.21.0")
     testImplementation ("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testImplementation ("org.junit.jupiter:junit-jupiter-engine:5.8.2")
