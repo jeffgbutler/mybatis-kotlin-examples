@@ -17,11 +17,6 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mybatis.dynamic.sql.util.kotlin.elements.equalTo
-import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
-import org.mybatis.dynamic.sql.util.kotlin.elements.isGreaterThan
-import org.mybatis.dynamic.sql.util.kotlin.elements.isIn
-import org.mybatis.dynamic.sql.util.kotlin.elements.isNull
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.select
 import org.mybatis.dynamic.sql.util.mybatis3.CommonSelectMapper
 import util.YesNoTypeHandler
@@ -55,8 +50,8 @@ internal class Example05Test {
             val mapper = session.getMapper(PersonMapper::class.java)
 
             val rows = mapper.select {
-                where(id, isEqualTo(1))
-                or(occupation, isNull())
+                where { id isEqualTo 1  }
+                or { occupation.isNull() }
                 orderBy(id)
             }
 
@@ -116,8 +111,8 @@ internal class Example05Test {
             val mapper = session.getMapper(PersonMapper::class.java)
 
             val rows = mapper.selectDistinct {
-                where(id, isGreaterThan(1))
-                or(occupation, isNull())
+                where { id isGreaterThan 1 }
+                or { occupation.isNull() }
             }
 
             assertThat(rows.size).isEqualTo(5)
@@ -130,7 +125,7 @@ internal class Example05Test {
             val mapper = session.getMapper(PersonMapper::class.java)
 
             val rows = mapper.select {
-                where(employed, isEqualTo(false))
+                where { employed isEqualTo false }
                 orderBy(id)
             }
 
@@ -145,7 +140,7 @@ internal class Example05Test {
         newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
 
-            val rows = mapper.select { where(firstName, isIn("Fred", "Barney")) }
+            val rows = mapper.select { where { firstName.isIn("Fred", "Barney") } }
 
             assertThat(rows.size).isEqualTo(2)
             assertThat(rows[0].lastName).isEqualTo("Flintstone")
@@ -157,7 +152,7 @@ internal class Example05Test {
     fun testDelete() {
         newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val rows = mapper.delete { where(occupation, isNull()) }
+            val rows = mapper.delete { where { occupation.isNull() } }
             assertThat(rows).isEqualTo(2)
         }
     }
@@ -301,7 +296,7 @@ internal class Example05Test {
             rows = mapper.update {
                 set(occupation).equalToNull()
                 set(employed).equalTo(false)
-                where(id, isEqualTo(100))
+                where { id isEqualTo 100 }
             }
 
             assertThat(rows).isEqualTo(1)
@@ -325,8 +320,8 @@ internal class Example05Test {
             val updateRecord = record.copy(occupation = "Programmer")
             rows = mapper.update {
                 updateAllColumns(updateRecord)
-                where(id, isEqualTo(100))
-                and(firstName, isEqualTo("Joe"))
+                where { id isEqualTo 100 }
+                and { firstName isEqualTo "Joe" }
             }
 
             assertThat(rows).isEqualTo(1)
@@ -362,7 +357,7 @@ internal class Example05Test {
     fun testCount() {
         newSession().use { session ->
             val mapper = session.getMapper(PersonMapper::class.java)
-            val rows = mapper.count { where(occupation, isNull()) }
+            val rows = mapper.count { where { occupation.isNull() } }
 
             assertThat(rows).isEqualTo(2L)
         }
@@ -389,9 +384,9 @@ internal class Example05Test {
             val selectStatement = select(id, firstName, parentId) {
                 from(person, "p1")
                 join(person2, "p2") {
-                    on(id, equalTo(person2.parentId))
+                    on(id) equalTo person2.parentId
                 }
-                where(person2.id, isEqualTo(6))
+                where { person2.id isEqualTo 6 }
             }
 
             val expectedStatement = ("select p1.id, p1.first_name, p1.parent_id"

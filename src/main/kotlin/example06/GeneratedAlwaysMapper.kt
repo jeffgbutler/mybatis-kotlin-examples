@@ -23,7 +23,6 @@ import org.mybatis.dynamic.sql.util.kotlin.DeleteCompleter
 import org.mybatis.dynamic.sql.util.kotlin.KotlinUpdateBuilder
 import org.mybatis.dynamic.sql.util.kotlin.SelectCompleter
 import org.mybatis.dynamic.sql.util.kotlin.UpdateCompleter
-import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.countFrom
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.deleteFrom
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.insert
@@ -85,7 +84,7 @@ fun GeneratedAlwaysMapper.delete(completer: DeleteCompleter) =
 
 fun GeneratedAlwaysMapper.deleteByPrimaryKey(id_: Int) =
     delete {
-        where(id, isEqualTo(id_))
+        where { id isEqualTo id_ }
     }
 
 fun GeneratedAlwaysMapper.insert(row: GeneratedAlwaysRow) =
@@ -152,7 +151,7 @@ fun GeneratedAlwaysMapper.selectDistinct(completer: SelectCompleter) =
 
 fun GeneratedAlwaysMapper.selectByPrimaryKey(id_: Int) =
     selectOne {
-        where(id, isEqualTo(id_))
+        where { id isEqualTo id_ }
     }
 
 fun GeneratedAlwaysMapper.update(completer: UpdateCompleter) =
@@ -164,26 +163,26 @@ fun GeneratedAlwaysMapper.update(completer: UpdateCompleter) =
 
 fun GeneratedAlwaysMapper.updateByPrimaryKey(row: GeneratedAlwaysRow) =
     update {
-        set(firstName).equalToOrNull(row::firstName)
-        set(lastName).equalToOrNull(row::lastName)
-        where(id, isEqualTo(row.id!!))
+        set(firstName) equalToOrNull row::firstName
+        set(lastName) equalToOrNull row::lastName
+        where { id isEqualTo row.id!! }
     }
 
 fun GeneratedAlwaysMapper.updateByPrimaryKeySelective(row: GeneratedAlwaysRow) =
     update {
-        set(firstName).equalToWhenPresent(row::firstName)
-        set(lastName).equalToWhenPresent(row::lastName)
-        where(id, isEqualTo(row.id!!))
+        set(firstName) equalToWhenPresent row::firstName
+        set(lastName) equalToWhenPresent row::lastName
+        where { id isEqualTo row.id!! }
     }
 
 fun KotlinUpdateBuilder.updateAllColumns(row: GeneratedAlwaysRow) =
     apply {
-        set(firstName).equalToOrNull(row::firstName)
-        set(lastName).equalToOrNull(row::lastName)
+        set(firstName) equalToOrNull row::firstName
+        set(lastName) equalToOrNull row::lastName
     }
 
 fun KotlinUpdateBuilder.updateSelectiveColumns(row: GeneratedAlwaysRow) =
     apply {
-        set(firstName).equalToWhenPresent(row::firstName)
-        set(lastName).equalToWhenPresent(row::lastName)
+        set(firstName) equalToWhenPresent row::firstName
+        set(lastName) equalToWhenPresent row::lastName
     }

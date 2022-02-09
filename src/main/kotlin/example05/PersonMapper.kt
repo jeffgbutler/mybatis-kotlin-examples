@@ -20,7 +20,6 @@ import org.mybatis.dynamic.sql.util.kotlin.DeleteCompleter
 import org.mybatis.dynamic.sql.util.kotlin.KotlinUpdateBuilder
 import org.mybatis.dynamic.sql.util.kotlin.SelectCompleter
 import org.mybatis.dynamic.sql.util.kotlin.UpdateCompleter
-import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.countFrom
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.deleteFrom
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.insert
@@ -70,7 +69,7 @@ fun PersonMapper.delete(completer: DeleteCompleter) =
 
 fun PersonMapper.deleteByPrimaryKey(id_: Int) =
     delete {
-        where(id, isEqualTo(id_))
+        where { id isEqualTo id_ }
     }
 
 fun PersonMapper.insert(row: PersonRecord) =
@@ -150,7 +149,7 @@ fun PersonMapper.selectDistinct(completer: SelectCompleter) =
 
 fun PersonMapper.selectByPrimaryKey(id_: Int) =
     selectOne {
-        where(id, isEqualTo(id_))
+        where { id isEqualTo id_ }
     }
 
 fun PersonMapper.update(completer: UpdateCompleter) =
@@ -158,48 +157,48 @@ fun PersonMapper.update(completer: UpdateCompleter) =
 
 fun PersonMapper.updateByPrimaryKey(row: PersonRecord) =
     update {
-        set(firstName).equalToOrNull(row::firstName)
-        set(lastName).equalToOrNull(row::lastName)
-        set(birthDate).equalToOrNull(row::birthDate)
-        set(employed).equalToOrNull(row::employed)
-        set(occupation).equalToOrNull(row::occupation)
-        set(addressId).equalToOrNull(row::addressId)
-        set(parentId).equalToOrNull(row::parentId)
-        where(id, isEqualTo(row.id!!))
+        set(firstName) equalToOrNull row::firstName
+        set(lastName) equalToOrNull row::lastName
+        set(birthDate) equalToOrNull row::birthDate
+        set(employed) equalToOrNull row::employed
+        set(occupation) equalToOrNull row::occupation
+        set(addressId) equalToOrNull row::addressId
+        set(parentId) equalToOrNull row::parentId
+        where { id isEqualTo row.id!! }
     }
 
 fun PersonMapper.updateByPrimaryKeySelective(row: PersonRecord) =
     update {
-        set(firstName).equalToWhenPresent(row::firstName)
-        set(lastName).equalToWhenPresent(row::lastName)
-        set(birthDate).equalToWhenPresent(row::birthDate)
-        set(employed).equalToWhenPresent(row::employed)
-        set(occupation).equalToWhenPresent(row::occupation)
-        set(addressId).equalToWhenPresent(row::addressId)
-        set(parentId).equalToWhenPresent(row::parentId)
-        where(id, isEqualTo(row.id!!))
+        set(firstName) equalToWhenPresent row::firstName
+        set(lastName) equalToWhenPresent row::lastName
+        set(birthDate) equalToWhenPresent row::birthDate
+        set(employed) equalToWhenPresent row::employed
+        set(occupation) equalToWhenPresent row::occupation
+        set(addressId) equalToWhenPresent row::addressId
+        set(parentId) equalToWhenPresent row::parentId
+        where { id isEqualTo row.id!! }
     }
 
 fun KotlinUpdateBuilder.updateAllColumns(row: PersonRecord) =
     apply {
-        set(id).equalToOrNull(row::id)
-        set(firstName).equalToOrNull(row::firstName)
-        set(lastName).equalToOrNull(row::lastName)
-        set(birthDate).equalToOrNull(row::birthDate)
-        set(employed).equalToOrNull(row::employed)
-        set(occupation).equalToOrNull(row::occupation)
-        set(addressId).equalToOrNull(row::addressId)
-        set(parentId).equalToOrNull(row::parentId)
+        set(id) equalToOrNull row::id
+        set(firstName) equalToOrNull row::firstName
+        set(lastName) equalToOrNull row::lastName
+        set(birthDate) equalToOrNull row::birthDate
+        set(employed) equalToOrNull row::employed
+        set(occupation) equalToOrNull row::occupation
+        set(addressId) equalToOrNull row::addressId
+        set(parentId) equalToOrNull row::parentId
     }
 
 fun KotlinUpdateBuilder.updateSelectiveColumns(row: PersonRecord) =
     apply {
-        set(id).equalToWhenPresent(row::id)
-        set(firstName).equalToWhenPresent(row::firstName)
-        set(lastName).equalToWhenPresent(row::lastName)
-        set(birthDate).equalToWhenPresent(row::birthDate)
-        set(employed).equalToWhenPresent(row::employed)
-        set(occupation).equalToWhenPresent(row::occupation)
-        set(addressId).equalToWhenPresent(row::addressId)
-        set(parentId).equalToWhenPresent(row::parentId)
+        set(id) equalToWhenPresent row::id
+        set(firstName) equalToWhenPresent row::firstName
+        set(lastName) equalToWhenPresent row::lastName
+        set(birthDate) equalToWhenPresent row::birthDate
+        set(employed) equalToWhenPresent row::employed
+        set(occupation) equalToWhenPresent row::occupation
+        set(addressId) equalToWhenPresent row::addressId
+        set(parentId) equalToWhenPresent row::parentId
     }

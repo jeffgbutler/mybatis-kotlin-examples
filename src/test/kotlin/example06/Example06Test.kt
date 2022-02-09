@@ -14,9 +14,6 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.mybatis.dynamic.sql.util.kotlin.elements.isEqualTo
-import org.mybatis.dynamic.sql.util.kotlin.elements.isGreaterThan
-import org.mybatis.dynamic.sql.util.kotlin.elements.isIn
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.insertInto
 import org.mybatis.dynamic.sql.util.mybatis3.CommonSelectMapper
 import java.io.InputStreamReader
@@ -47,7 +44,7 @@ internal class Example06Test {
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
 
             val rows = mapper.select {
-                where(id, isEqualTo(22))
+                where { id isEqualTo 22 }
                 orderBy(id)
             }
 
@@ -102,7 +99,7 @@ internal class Example06Test {
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
 
             val rows = mapper.selectDistinct {
-                where(id, isGreaterThan(1))
+                where { id isGreaterThan 1 }
             }
 
             assertThat(rows.size).isEqualTo(4)
@@ -115,7 +112,7 @@ internal class Example06Test {
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
 
             val rows = mapper.select {
-                where(firstName, isIn("Fred", "Barney"))
+                where { firstName.isIn("Fred", "Barney") }
                 orderBy(lastName)
             }
 
@@ -130,7 +127,7 @@ internal class Example06Test {
         newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
             val rows = mapper.delete {
-                where(lastName, isEqualTo("Rubble"))
+                where { lastName isEqualTo "Rubble" }
             }
             assertThat(rows).isEqualTo(2)
         }
@@ -288,8 +285,8 @@ internal class Example06Test {
             val updateRecord = row.copy(firstName = "Sam")
             rows = mapper.update {
                 updateAllColumns(updateRecord)
-                where(id, isEqualTo(26))
-                and(firstName, isEqualTo("Joe"))
+                where { id isEqualTo 26 }
+                and { firstName isEqualTo "Joe" }
             }
 
             assertThat(rows).isEqualTo(1)
@@ -322,7 +319,7 @@ internal class Example06Test {
         newSession().use { session ->
             val mapper = session.getMapper(GeneratedAlwaysMapper::class.java)
             val rows = mapper.count {
-                where(lastName, isEqualTo("Rubble"))
+                where { lastName isEqualTo "Rubble" }
             }
 
             assertThat(rows).isEqualTo(2L)
