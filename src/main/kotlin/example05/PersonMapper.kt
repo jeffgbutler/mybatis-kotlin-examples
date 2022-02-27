@@ -74,14 +74,14 @@ fun PersonMapper.deleteByPrimaryKey(id_: Int) =
 
 fun PersonMapper.insert(row: PersonRecord) =
     insert(this::insert, row, person) {
-        map(id).toProperty("id")
-        map(firstName).toProperty("firstName")
-        map(lastName).toProperty("lastName")
-        map(birthDate).toProperty("birthDate")
-        map(employed).toProperty("employed")
-        map(occupation).toProperty("occupation")
-        map(addressId).toProperty("addressId")
-        map(parentId).toProperty("parentId")
+        map(id) toProperty "id"
+        map(firstName) toProperty "firstName"
+        map(lastName) toProperty "lastName"
+        map(birthDate) toProperty "birthDate"
+        map(employed) toProperty "employed"
+        map(occupation) toProperty "occupation"
+        map(addressId) toProperty "addressId"
+        map(parentId) toProperty "parentId"
     }
 
 fun PersonMapper.insertBatch(vararg records: PersonRecord) =
@@ -89,14 +89,14 @@ fun PersonMapper.insertBatch(vararg records: PersonRecord) =
 
 fun PersonMapper.insertBatch(records: List<PersonRecord>) =
     insertBatch(this::insert, records, person) {
-        map(id).toProperty("id")
-        map(firstName).toProperty("firstName")
-        map(lastName).toProperty("lastName")
-        map(birthDate).toProperty("birthDate")
-        map(employed).toProperty("employed")
-        map(occupation).toProperty("occupation")
-        map(addressId).toProperty("addressId")
-        map(parentId).toProperty("parentId")
+        map(id) toProperty "id"
+        map(firstName) toProperty "firstName"
+        map(lastName) toProperty "lastName"
+        map(birthDate) toProperty "birthDate"
+        map(employed) toProperty "employed"
+        map(occupation) toProperty "occupation"
+        map(addressId) toProperty "addressId"
+        map(parentId) toProperty "parentId"
     }
 
 fun PersonMapper.insertMultiple(vararg records: PersonRecord) =
@@ -108,14 +108,14 @@ fun PersonMapper.insertMultiple(records: List<PersonRecord>) =
         records,
         person
     ) {
-        map(id).toProperty("id")
-        map(firstName).toProperty("firstName")
-        map(lastName).toProperty("lastName")
-        map(birthDate).toProperty("birthDate")
-        map(employed).toProperty("employed")
-        map(occupation).toProperty("occupation")
-        map(addressId).toProperty("addressId")
-        map(parentId).toProperty("parentId")
+        map(id) toProperty "id"
+        map(firstName) toProperty "firstName"
+        map(lastName) toProperty "lastName"
+        map(birthDate) toProperty "birthDate"
+        map(employed) toProperty "employed"
+        map(occupation) toProperty "occupation"
+        map(addressId) toProperty "addressId"
+        map(parentId) toProperty "parentId"
     }
 
 private val columnList = listOf(

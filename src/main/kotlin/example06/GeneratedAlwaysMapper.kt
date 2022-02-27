@@ -93,8 +93,8 @@ fun GeneratedAlwaysMapper.insert(row: GeneratedAlwaysRow) =
         row,
         generatedAlways
     ) {
-        map(firstName).toProperty("firstName")
-        map(lastName).toProperty("lastName")
+        map(firstName) toProperty "firstName"
+        map(lastName) toProperty "lastName"
     }
 
 fun GeneratedAlwaysMapper.insertBatch(vararg records: GeneratedAlwaysRow) =
@@ -106,8 +106,8 @@ fun GeneratedAlwaysMapper.insertBatch(records: List<GeneratedAlwaysRow>) =
         records,
         generatedAlways
     ) {
-        map(firstName).toProperty("firstName")
-        map(lastName).toProperty("lastName")
+        map(firstName) toProperty "firstName"
+        map(lastName) toProperty "lastName"
     }
 
 fun GeneratedAlwaysMapper.insertMultiple(vararg records: GeneratedAlwaysRow) =
@@ -119,8 +119,8 @@ fun GeneratedAlwaysMapper.insertMultiple(records: List<GeneratedAlwaysRow>) =
         records,
         generatedAlways
     ) {
-        map(firstName).toProperty("firstName")
-        map(lastName).toProperty("lastName")
+        map(firstName) toProperty "firstName"
+        map(lastName) toProperty "lastName"
     }
 
 private val columnList = listOf(
