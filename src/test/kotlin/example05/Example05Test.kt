@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.select
 import org.mybatis.dynamic.sql.util.mybatis3.CommonSelectMapper
 import util.YesNoTypeHandler
+import util.matchesAny
 import java.io.InputStreamReader
 import java.sql.DriverManager
 import java.time.LocalDate
@@ -400,6 +401,40 @@ internal class Example05Test {
             assertThat(row).containsEntry("ID", 4)
             assertThat(row).containsEntry("FIRST_NAME", "Barney")
             assertThat(row).doesNotContainKey("PARENT_ID")
+        }
+    }
+
+    @Test
+    fun testReceiverFunction() {
+        newSession().use { session ->
+            val mapper = session.getMapper(CommonSelectMapper::class.java)
+
+            // find all children with a convoluted query
+            val selectStatement = select(id, firstName, lastName) {
+                from(person)
+                where {
+                    id matchesAny {
+                        select (id) {
+                            from(person)
+                            where {
+                                parentId.isNotNull()
+                            }
+                        }
+                    }
+                }
+                orderBy(id)
+            }
+
+            val expected = "select id, first_name, last_name from Person " +
+                    "where id = any (select id from Person where parent_id is not null) order by id"
+
+            assertThat(selectStatement.selectStatement).isEqualTo(expected)
+
+            val rows = mapper.selectManyMappedRows(selectStatement)
+
+            assertThat(rows).hasSize(2)
+            assertThat(rows[0]["FIRST_NAME"]).isEqualTo("Pebbles")
+            assertThat(rows[1]["FIRST_NAME"]).isEqualTo("Bamm Bamm")
         }
     }
 
