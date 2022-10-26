@@ -58,6 +58,13 @@ This example shows how to use MyBatis support for N+1 query mitigation.  This in
 result map with a nested collection.  Currently, this is only supported in MyBatis using XML to define the
 result map. 
 
+### example04.lazy - Lazy Loaded Nested Collections
+
+This example shows how to use MyBatis support for lazy loaded associations. This forces an N+1 query (or worse),
+so be careful with lazy loading.  There are also issues with lazy loading and Kotlin due to underlying issues
+in Javassist. See the test code for a workaround. We can code queries like this without XML which is good, but the
+performance may be worse - tradeoffs.
+
 ### example05 - MyBatis Dynamic SQL
 
 This example shows how to use Kotlin to interact with the "MyBatis Dynamic SQL" library.
