@@ -42,12 +42,6 @@ class Example04LazyTest {
             assertThat(address.city).isEqualTo("Bedrock")
             assertThat(address.state).isEqualTo("IN")
 
-            // This call forces the lazy load to trigger. MyBatis uses Javassist to proxy objects when lazy loading
-            // is enabled. Javassist currently doesn't support Kotlin. Calling "hashCode" (or "toString",
-            // "equals", or "clone") will cause the lazy load to trigger (these 4 methods are configured in
-            // MyBatis by default)
-            address.hashCode()
-
             assertThat(address.people.size).isEqualTo(3)
 
             assertThat(address.people[0].firstName).isEqualTo("Fred")
@@ -67,26 +61,6 @@ class Example04LazyTest {
             assertThat(address.people[2].birthDate).isEqualTo(LocalDate.of(1960, 5, 6))
             assertThat(address.people[2].employed).isFalse
             assertThat(address.people[2].occupation).isNull()
-        }
-    }
-
-    @Test
-    fun selectAddressByIdDemonstratingLazyLoadFailure() {
-        newSession().use { session ->
-            val mapper = session.getMapper(Example04LazyMapper::class.java)
-
-            val address = mapper.selectAddressById(1)
-
-            assertThat(address.id).isEqualTo(1)
-            assertThat(address.streetAddress).isEqualTo("123 Main Street")
-            assertThat(address.city).isEqualTo("Bedrock")
-            assertThat(address.state).isEqualTo("IN")
-
-            // this exception will be thrown because the lazy load is not triggered due to
-            // Javassist not supporting Kotlin
-            assertThatExceptionOfType(UninitializedPropertyAccessException::class.java).isThrownBy {
-                assertThat(address.people.size).isEqualTo(3)
-            }
         }
     }
 

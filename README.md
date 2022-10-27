@@ -61,9 +61,10 @@ result map.
 ### example04.lazy - Lazy Loaded Nested Collections
 
 This example shows how to use MyBatis support for lazy loaded associations. This forces an N+1 query (or worse),
-so be careful with lazy loading.  There are also issues with lazy loading and Kotlin due to underlying issues
-in Javassist. See the test code for a workaround. We can code queries like this without XML which is good, but the
-performance may be worse - tradeoffs.
+so be careful with lazy loading.  There are also issues with lazy loading and Kotlin due to the way that Javassist
+works (MyBatis uses Javassist to create dynamic proxies when you use lazy loading). Any class that will be
+lazy loaded, and any field in that class that will be lazy loaded, must be declared "open" in Kotlin.
+We can code queries like this without XML which is good, but the performance may be worse - tradeoffs.
 
 ### example05 - MyBatis Dynamic SQL
 
