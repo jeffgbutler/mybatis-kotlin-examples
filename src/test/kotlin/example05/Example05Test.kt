@@ -51,8 +51,10 @@ internal class Example05Test {
             val mapper = session.getMapper(PersonMapper::class.java)
 
             val rows = mapper.select {
-                where { id isEqualTo 1  }
-                or { occupation.isNull() }
+                where {
+                    id isEqualTo 1
+                    or { occupation.isNull() }
+                }
                 orderBy(id)
             }
 
@@ -112,8 +114,10 @@ internal class Example05Test {
             val mapper = session.getMapper(PersonMapper::class.java)
 
             val rows = mapper.selectDistinct {
-                where { id isGreaterThan 1 }
-                or { occupation.isNull() }
+                where {
+                    id isGreaterThan 1
+                    or { occupation.isNull() }
+                }
             }
 
             assertThat(rows.size).isEqualTo(5)
@@ -321,8 +325,10 @@ internal class Example05Test {
             val updateRecord = record.copy(occupation = "Programmer")
             rows = mapper.update {
                 updateAllColumns(updateRecord)
-                where { id isEqualTo 100 }
-                and { firstName isEqualTo "Joe" }
+                where {
+                    id isEqualTo 100
+                    and { firstName isEqualTo "Joe" }
+                }
             }
 
             assertThat(rows).isEqualTo(1)

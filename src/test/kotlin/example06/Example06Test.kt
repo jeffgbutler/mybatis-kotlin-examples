@@ -285,8 +285,10 @@ internal class Example06Test {
             val updateRecord = row.copy(firstName = "Sam")
             rows = mapper.update {
                 updateAllColumns(updateRecord)
-                where { id isEqualTo 26 }
-                and { firstName isEqualTo "Joe" }
+                where {
+                    id isEqualTo 26
+                    and { firstName isEqualTo "Joe" }
+                }
             }
 
             assertThat(rows).isEqualTo(1)
