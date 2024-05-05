@@ -11,8 +11,7 @@ import org.mybatis.dynamic.sql.util.kotlin.KotlinSubQueryBuilder
 // context receiver function. This is experimental in Kotlin 1.6.20
 
 class MatchesAny<T>(selectModelBuilder: Buildable<SelectModel>) : AbstractSubselectCondition<T>(selectModelBuilder){
-    override fun renderCondition(columnName: String, renderedSelectStatement: String) =
-        "$columnName = any ($renderedSelectStatement)"
+    override fun operator() = "= any"
 }
 
 context (GroupingCriteriaCollector)
