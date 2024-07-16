@@ -32,7 +32,7 @@ dependencies {
     implementation ("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.5.2")
     testImplementation ("org.assertj:assertj-core:3.26.3")
     testImplementation ("org.junit.jupiter:junit-jupiter-api:5.10.2")
-    testImplementation ("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    testImplementation ("org.junit.jupiter:junit-jupiter-engine:5.10.3")
     testImplementation ("org.hsqldb:hsqldb:2.7.3")
 }
 
