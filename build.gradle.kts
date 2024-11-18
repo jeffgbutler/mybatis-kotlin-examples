@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -10,11 +11,9 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 sourceSets {
     main {
-        java {
-            srcDirs("src/main/kotlin")
-        }
         resources {
-            srcDirs("src/main/kotlin")
+            srcDir("src/main/kotlin")
+            include("**/*.xml")
         }
     }
 }
@@ -34,6 +33,7 @@ dependencies {
     testImplementation ("org.junit.jupiter:junit-jupiter-api:5.11.3")
     testImplementation ("org.junit.jupiter:junit-jupiter-engine:5.11.3")
     testImplementation ("org.hsqldb:hsqldb:2.7.4")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.11.3")
 }
 
 tasks.withType<Test> {
@@ -41,8 +41,8 @@ tasks.withType<Test> {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict", "-Xcontext-receivers")
-        jvmTarget = "11"
+    compilerOptions {
+        freeCompilerArgs.addAll("-Xjsr305=strict", "-Xcontext-receivers")
+        jvmTarget.set(JvmTarget.JVM_11)
     }
 }
