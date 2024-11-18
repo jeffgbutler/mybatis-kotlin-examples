@@ -419,7 +419,7 @@ internal class Example05Test {
             val selectStatement = select(id, firstName, lastName) {
                 from(person)
                 where {
-                    id matchesAny {
+                    id.matchesAny(this) {
                         select (id) {
                             from(person)
                             where {
