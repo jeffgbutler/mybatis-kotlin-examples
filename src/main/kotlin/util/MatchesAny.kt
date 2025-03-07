@@ -7,7 +7,7 @@ import org.mybatis.dynamic.sql.util.Buildable
 import org.mybatis.dynamic.sql.util.kotlin.GroupingCriteriaCollector
 import org.mybatis.dynamic.sql.util.kotlin.KotlinSubQueryBuilder
 
-class MatchesAny<T>(selectModelBuilder: Buildable<SelectModel>) : AbstractSubselectCondition<T>(selectModelBuilder){
+class MatchesAny<T : Any>(selectModelBuilder: Buildable<SelectModel>) : AbstractSubselectCondition<T>(selectModelBuilder){
     override fun operator() = "= any"
 }
 
@@ -16,7 +16,7 @@ class MatchesAny<T>(selectModelBuilder: Buildable<SelectModel>) : AbstractSubsel
 // This should eventually be easier when Kotlin introduces Context Parameters
 // https://github.com/Kotlin/KEEP/blob/context-parameters/proposals/context-parameters.md
 
-fun <T> BindableColumn<T>.matchesAny(
+fun <T: Any> BindableColumn<T>.matchesAny(
     collector: GroupingCriteriaCollector,
     subQueryBuilder: KotlinSubQueryBuilder.() -> Unit
 ) =

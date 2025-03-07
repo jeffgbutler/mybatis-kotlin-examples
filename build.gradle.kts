@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -7,7 +6,12 @@ plugins {
 
 group = "com.github.jeffgbutler"
 version = "1.0.0-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_11
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
 
 sourceSets {
     main {
@@ -26,14 +30,11 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation ("org.mybatis:mybatis:3.5.19")
-    implementation ("org.mybatis.dynamic-sql:mybatis-dynamic-sql:1.5.2")
+    implementation ("org.mybatis.dynamic-sql:mybatis-dynamic-sql:2.0.0-SNAPSHOT")
     testImplementation ("org.assertj:assertj-core:3.27.3")
-    testImplementation ("org.junit.jupiter:junit-jupiter-api:5.12.0")
-    testImplementation ("org.junit.jupiter:junit-jupiter-engine:5.12.0")
     testImplementation ("org.hsqldb:hsqldb:2.7.4")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.12.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.1.10")
 }
 
 tasks.withType<Test> {
@@ -43,6 +44,5 @@ tasks.withType<Test> {
 tasks.withType<KotlinCompile> {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")
-        jvmTarget.set(JvmTarget.JVM_11)
     }
 }

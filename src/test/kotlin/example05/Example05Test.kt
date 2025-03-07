@@ -390,9 +390,7 @@ internal class Example05Test {
             // get Bamm Bamm's parent - should be Barney
             val selectStatement = select(id, firstName, parentId) {
                 from(person, "p1")
-                join(person2, "p2") {
-                    on(id) equalTo person2.parentId
-                }
+                join(person2, "p2") on { id isEqualTo person2.parentId}
                 where { person2.id isEqualTo 6 }
             }
 
