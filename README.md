@@ -76,3 +76,17 @@ This example also shows how MyBatis Generator creates code for Kotlin.
 This example shows how to use Kotlin to interact with the "MyBatis Dynamic SQL" library when a
 table contains generated values.
 This example also shows how MyBatis Generator creates code for Kotlin.
+
+### example07 — Explicit Constructor Mappings
+Example02 showed how MyBatis can automap constructors. Example07 shows how to explicitly map constructors, using both
+annotations and XML. The key learning is that Kotlin's handling of primitive types can be confusing. A non-nullable
+primitive type maps to a true Java primitive type, but a nullable primitive will map to the Java wrapper type.
+In XML configuration, you must use the proper type aliases for these types. The following table shows examples of these
+mappings:
+
+| Kotlin Type | Java Type | MyBatis Alias |
+|-------------|-----------|---------------|
+| Int         | int       | _int          |
+| Int?        | Integer   | int           |
+| Boolean     | boolean   | _boolean      |
+| Boolean?    | Boolean   | boolean       |

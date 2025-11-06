@@ -1,0 +1,19 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="example07.Example07Mapper">
+
+  <select id="selectPersonByIdWithXMLMapping" resultMap="PersonResult">
+    select id, first_name, last_name, birth_date, employed, occupation
+    from Person where id = #{value}
+  </select>
+
+  <resultMap id="PersonResult" type="example07.Person">
+    <constructor>
+      <idArg column="id" javaType="_int" />
+      <arg column="first_name" javaType="string" />
+      <arg column="last_name" javaType="string" />
+      <arg column="birth_date" javaType="java.time.LocalDate" />
+      <arg column="employed" javaType="_boolean" typeHandler="util.YesNoTypeHandler" />
+      <arg column="occupation" javaType="string" />
+    </constructor>
+  </resultMap>
+</mapper>
