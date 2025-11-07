@@ -6,13 +6,18 @@
     from Person where id = #{value}
   </select>
 
+  <!--
+   this result map shows how to properly handle Java primitives. Kotlin maps non-nullable primitives
+   (like Int) to true Java primitives (int). Nullable primitives (like Int?) are mapped to the wrapper
+   classes (Integer).
+  -->
   <resultMap id="PersonResult" type="example07.Person">
     <constructor>
-      <idArg column="id" javaType="_int" />
+      <idArg column="id" javaType="_int" /> <!-- Note the use of "_int" here -->
       <arg column="first_name" javaType="string" />
       <arg column="last_name" javaType="string" />
       <arg column="birth_date" javaType="java.time.LocalDate" />
-      <arg column="employed" javaType="_boolean" typeHandler="util.YesNoTypeHandler" />
+      <arg column="employed" javaType="_boolean" typeHandler="util.YesNoTypeHandler" /> <!-- Note the use of "_boolean" here -->
       <arg column="occupation" javaType="string" />
     </constructor>
   </resultMap>
