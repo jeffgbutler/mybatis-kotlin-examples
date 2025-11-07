@@ -19,6 +19,9 @@ result set mapping is predicated on the idea that objects can be instantiated an
 strictly compatible with idiomatic Kotlin. With idiomatic Kotlin, objects are created through their constructors and are
 immutable after creation. The examples (especially example03 and example04) will show patterns of dealing with this.
 
+Note that with MyBatis 3.6 and later, we can make the classes fully immutable. Starting with that version, MyBatis is
+able to build a nested collection before calling the outer constructor. Example08 shows how to configure this.
+
 ### example01 - Auto Mapping
 
 This example shows that MyBatis is able to create simple objects (basic data types, no nested classes) with idiomatic
@@ -52,11 +55,19 @@ This example shows how to write Kotlin for a class hierarchy where a class (Pers
 attribute that is another class (Address in this case).  With this example we can no longer use Kotlin
 immutable data classes because of the way that MyBatis constructs an object graph in cases like this. 
 
+Note that this example uses mutable objects, which are not exactly idiomatic Kotlin. This shows how to use MyBatis for
+nested collections with MyBatis version prior to 3.6.0. After that version, MyBatis is able to build nested object
+graphs that are fully immutable. See Example08 for how to use fully immutable result objects.
+
 ### example04 - Join Queries with Nested Collections
 
 This example shows how to use MyBatis support for N+1 query mitigation.  This involves creating a
 result map with a nested collection.  Currently, this is only supported in MyBatis using XML to define the
-result map. 
+result map.
+
+Note that this example uses mutable objects, which are not exactly idiomatic Kotlin. This shows how to use MyBatis for
+nested collections with MyBatis version prior to 3.6.0. After that version, MyBatis is able to build nested object
+graphs that are fully immutable. See Example08 for how to use fully immutable result objects.
 
 ### example04.lazy - Lazy Loaded Nested Collections
 
@@ -90,3 +101,8 @@ mappings:
 | Int?        | Integer   | int           |
 | Boolean     | boolean   | _boolean      |
 | Boolean?    | Boolean   | boolean       |
+
+### example08 - Fully Immutable Object Graphs
+Starting with MyBatis version 3.6, we can now build object graphs with nested objects and collections that are fully
+immutable. This example shows how to do this. We still need to define the result maps in XML, but the code is much
+more compatible with idiomatic Kotlin.

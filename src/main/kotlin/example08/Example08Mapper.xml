@@ -1,0 +1,66 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="example08.Example08Mapper">
+
+    <!--
+      This example shows how to code a query with a list of nested objects.
+
+      Note the attribute resultOrdered="true" - this is required for immutable results with collections
+    -->
+    <select id="selectAddressById" resultMap="AddressWithPeopleResult" resultOrdered="true" >
+        select a.id, a.street_address, a.city, a.state, p.id as person_id, p.first_name, p.last_name, p.birth_date, p.employed, p.occupation
+        from Address a join Person p on a.id = p.address_id
+        where a.id = #{value}
+        order by id, person_id
+    </select>
+
+    <resultMap id="AddressWithPeopleResult" type="example08.AddressWithPeople">
+        <constructor>
+            <idArg column="id" javaType="_int" />
+            <arg column="street_address" javaType="string" />
+            <arg column="city" javaType="string" />
+            <arg column="state" javaType="string" />
+            <arg resultMap="PersonResult" javaType="java.util.List" />
+        </constructor>
+    </resultMap>
+    
+    <resultMap id="PersonResult" type="example08.Person">
+        <constructor>
+            <idArg column="person_id" javaType="_int" />
+            <arg column="first_name" javaType="string" />
+            <arg column="last_name" javaType="string" />
+            <arg column="birth_date" javaType="java.time.LocalDate" />
+            <arg column="employed" javaType="_boolean" typeHandler="util.YesNoTypeHandler" />
+            <arg column="occupation" javaType="string" />
+        </constructor>
+    </resultMap>
+
+    <!--
+      This example shows how to code a query with a single nested object.
+    -->
+    <select id="selectPersonById" resultMap="PersonWithAddressResult" >
+        select a.id, a.street_address, a.city, a.state, p.id as person_id, p.first_name, p.last_name, p.birth_date, p.employed, p.occupation
+        from Address a join Person p on a.id = p.address_id
+        where p.id = #{value}
+    </select>
+
+    <resultMap id="PersonWithAddressResult" type="example08.PersonWithAddress">
+        <constructor>
+            <idArg column="person_id" javaType="_int" />
+            <arg column="first_name" javaType="string" />
+            <arg column="last_name" javaType="string" />
+            <arg column="birth_date" javaType="java.time.LocalDate" />
+            <arg column="employed" javaType="_boolean" typeHandler="util.YesNoTypeHandler" />
+            <arg column="occupation" javaType="string" />
+            <arg resultMap="AddressResult" javaType="example08.Address" />
+        </constructor>
+    </resultMap>
+
+    <resultMap id="AddressResult" type="example08.Address">
+        <constructor>
+            <idArg column="id" javaType="_int" />
+            <arg column="street_address" javaType="string" />
+            <arg column="city" javaType="string" />
+            <arg column="state" javaType="string" />
+        </constructor>
+    </resultMap>
+</mapper>
