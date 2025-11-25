@@ -11,11 +11,11 @@ class MatchesAny<T : Any>(selectModelBuilder: Buildable<SelectModel>) : Abstract
     override fun operator() = "= any"
 }
 
-// The class and function in this file show how to extend the WHERE DSL
+// The class and function in this file show how to extend the WHERE DSL in various ways
 
-// This should eventually be easier when Kotlin introduces Context Parameters
-// https://github.com/Kotlin/KEEP/blob/context-parameters/proposals/context-parameters.md
-
+// The following shows how to extend the DSL without using any experimental features.
+// It is somewhat less elegant than the context parameters method shown below, but it doesn't require the use of an
+// experimental compiler feature
 fun <T: Any> BindableColumn<T>.matchesAny(
     collector: GroupingCriteriaCollector,
     subQueryBuilder: KotlinSubQueryBuilder.() -> Unit
@@ -25,10 +25,11 @@ fun <T: Any> BindableColumn<T>.matchesAny(
     }
 
 
-// The following shows how to do it with the deprecated Context Receivers method
-// We keep this as reference to show a desired future state once Kotlin has a good solution to the
-// problem of multiple contexts. This required use of the compiler flag -Xcontext-receivers
-
-//context (GroupingCriteriaCollector)
-//infix fun <T> BindableColumn<T>.matchesAny(subQueryBuilder: KotlinSubQueryBuilder.() -> Unit) =
-//    invoke(MatchesAny(KotlinSubQueryBuilder().apply(subQueryBuilder)))
+// The following shows how to extend the DSL with the experimental Context Parameters method
+// https://github.com/Kotlin/KEEP/blob/context-parameters/proposals/context-parameters.md
+// This requires use of the compiler flag -Xcontext-parameters
+context (collector: GroupingCriteriaCollector)
+infix fun <T : Any> BindableColumn<T>.matchesAny(subQueryBuilder: KotlinSubQueryBuilder.() -> Unit) =
+    with(collector) {
+        invoke(MatchesAny(KotlinSubQueryBuilder().apply(subQueryBuilder)))
+    }

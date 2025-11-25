@@ -43,6 +43,6 @@ tasks.withType<Test> {
 
 tasks.withType<KotlinCompile> {
     compilerOptions {
-        freeCompilerArgs.addAll("-Xjsr305=strict")
+        freeCompilerArgs.addAll("-Xjsr305=strict", "-Xcontext-parameters")
     }
 }

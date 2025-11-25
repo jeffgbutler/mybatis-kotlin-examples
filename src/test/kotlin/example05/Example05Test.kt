@@ -407,7 +407,7 @@ internal class Example05Test {
     }
 
     @Test
-    fun testReceiverFunction() {
+    fun testReceiverFunctionWithExplicitContext() {
         newSession().use { session ->
             val mapper = session.getMapper(CommonSelectMapper::class.java)
 
@@ -416,6 +416,40 @@ internal class Example05Test {
                 from(person)
                 where {
                     id.matchesAny(this) {
+                        select (id) {
+                            from(person)
+                            where {
+                                parentId.isNotNull()
+                            }
+                        }
+                    }
+                }
+                orderBy(id)
+            }
+
+            val expected = "select id, first_name, last_name from Person " +
+                    "where id = any (select id from Person where parent_id is not null) order by id"
+
+            assertThat(selectStatement.selectStatement).isEqualTo(expected)
+
+            val rows = mapper.selectManyMappedRows(selectStatement)
+
+            assertThat(rows).hasSize(2)
+            assertThat(rows[0]["FIRST_NAME"]).isEqualTo("Pebbles")
+            assertThat(rows[1]["FIRST_NAME"]).isEqualTo("Bamm Bamm")
+        }
+    }
+
+    @Test
+    fun testReceiverFunctionWithContextParameter() {
+        newSession().use { session ->
+            val mapper = session.getMapper(CommonSelectMapper::class.java)
+
+            // find all children with a convoluted query
+            val selectStatement = select(id, firstName, lastName) {
+                from(person)
+                where {
+                    id matchesAny {
                         select (id) {
                             from(person)
                             where {
