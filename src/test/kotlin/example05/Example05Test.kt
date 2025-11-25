@@ -19,7 +19,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.mybatis.dynamic.sql.util.kotlin.mybatis3.select
 import org.mybatis.dynamic.sql.util.mybatis3.CommonSelectMapper
-import util.YesNoTypeHandler
 import util.matchesAny
 import java.io.InputStreamReader
 import java.sql.DriverManager
@@ -39,7 +38,6 @@ internal class Example05Test {
         val ds = UnpooledDataSource(JDBC_DRIVER, JDBC_URL, "sa", "")
         val environment = Environment("test", JdbcTransactionFactory(), ds)
         val config = Configuration(environment)
-        config.typeHandlerRegistry.register(YesNoTypeHandler::class.java)
         config.addMapper(PersonMapper::class.java)
         config.addMapper(CommonSelectMapper::class.java)
         return SqlSessionFactoryBuilder().build(config).openSession(executorType)

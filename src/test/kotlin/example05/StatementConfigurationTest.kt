@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test
 import org.mybatis.dynamic.sql.exception.NonRenderingWhereClauseException
 import org.mybatis.dynamic.sql.util.kotlin.elements.isLikeCaseInsensitiveWhenPresent
 import org.mybatis.dynamic.sql.util.mybatis3.CommonSelectMapper
-import util.YesNoTypeHandler
 import java.io.InputStreamReader
 import java.sql.DriverManager
 
@@ -32,7 +31,6 @@ class StatementConfigurationTest {
         val ds = UnpooledDataSource(Example05Test.JDBC_DRIVER, Example05Test.JDBC_URL, "sa", "")
         val environment = Environment("test", JdbcTransactionFactory(), ds)
         val config = Configuration(environment)
-        config.typeHandlerRegistry.register(YesNoTypeHandler::class.java)
         config.addMapper(PersonMapper::class.java)
         config.addMapper(CommonSelectMapper::class.java)
         return SqlSessionFactoryBuilder().build(config).openSession(executorType)

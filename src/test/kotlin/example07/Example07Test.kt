@@ -9,7 +9,6 @@ import org.apache.ibatis.session.SqlSession
 import org.apache.ibatis.session.SqlSessionFactoryBuilder
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory
 import org.junit.jupiter.api.Test
-import util.YesNoTypeHandler
 import java.io.InputStreamReader
 import java.sql.DriverManager
 import java.time.LocalDate
@@ -27,8 +26,6 @@ class Example07Test {
         val ds = UnpooledDataSource(JDBC_DRIVER, JDBC_URL, "sa", "")
         val environment = Environment("test", JdbcTransactionFactory(), ds)
         val config = Configuration(environment)
-        // register the type handler...
-        config.typeHandlerRegistry.register(YesNoTypeHandler::class.java)
         config.addMapper(Example07Mapper::class.java)
         return SqlSessionFactoryBuilder().build(config).openSession()
     }
