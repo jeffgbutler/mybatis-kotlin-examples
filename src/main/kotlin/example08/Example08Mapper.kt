@@ -31,5 +31,6 @@ interface Example08Mapper {
         Arg(column = "city", javaType = String::class),
         Arg(column = "state", javaType = String::class)
     ])
+    @Select("dummy")
     fun dummyAddressResult() : Address
 }
