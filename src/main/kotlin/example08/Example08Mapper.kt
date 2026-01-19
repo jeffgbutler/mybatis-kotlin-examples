@@ -21,7 +21,6 @@ interface Example08Mapper {
         "select a.id, a.street_address, a.city, a.state, p.id as person_id, p.first_name, p.last_name, p.birth_date, p.employed, p.occupation",
         "from Address a join Person p on a.id = p.address_id",
         "where p.id = #{value}"
-
     )
     fun selectPersonById(id: Int): PersonWithAddress
 
