@@ -66,6 +66,40 @@ class Example08Test {
     }
 
     @Test
+    fun selectAddressByIdAnnotated() {
+        newSession().use { session ->
+            val mapper = session.getMapper(Example08Mapper::class.java)
+
+            val address = mapper.selectAddressByIdAnnotated(1)
+
+            assertThat(address.id).isEqualTo(1)
+            assertThat(address.streetAddress).isEqualTo("123 Main Street")
+            assertThat(address.city).isEqualTo("Bedrock")
+            assertThat(address.state).isEqualTo("IN")
+
+            assertThat(address.people.size).isEqualTo(3)
+
+            assertThat(address.people[0].firstName).isEqualTo("Fred")
+            assertThat(address.people[0].lastName).isEqualTo("Flintstone")
+            assertThat(address.people[0].birthDate).isEqualTo(LocalDate.of(1935, 2, 1))
+            assertThat(address.people[0].employed).isTrue
+            assertThat(address.people[0].occupation).isEqualTo("Brontosaurus Operator")
+
+            assertThat(address.people[1].firstName).isEqualTo("Wilma")
+            assertThat(address.people[1].lastName).isEqualTo("Flintstone")
+            assertThat(address.people[1].birthDate).isEqualTo(LocalDate.of(1940, 2, 1))
+            assertThat(address.people[1].employed).isTrue
+            assertThat(address.people[1].occupation).isEqualTo("Accountant")
+
+            assertThat(address.people[2].firstName).isEqualTo("Pebbles")
+            assertThat(address.people[2].lastName).isEqualTo("Flintstone")
+            assertThat(address.people[2].birthDate).isEqualTo(LocalDate.of(1960, 5, 6))
+            assertThat(address.people[2].employed).isFalse
+            assertThat(address.people[2].occupation).isNull()
+        }
+    }
+
+    @Test
     fun selectPersonWithAllFields() {
         newSession().use { session ->
             val mapper = session.getMapper(Example08Mapper::class.java)
