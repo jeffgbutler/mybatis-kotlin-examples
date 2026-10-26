@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    implementation ("org.mybatis:mybatis:3.6.0-SNAPSHOT")
+    implementation ("org.mybatis:mybatis:3.6.0")
     implementation ("org.mybatis.dynamic-sql:mybatis-dynamic-sql:2.0.0")
     testImplementation ("org.assertj:assertj-core:3.27.7")
     testImplementation ("org.hsqldb:hsqldb:2.7.4")
